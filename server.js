@@ -6,6 +6,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 
+// ❗ ВАЖНО — отдаём папку public
 app.use(express.static("public"))
 
 let players = []
@@ -16,9 +17,6 @@ let currentImage = ""
 io.on("connection", (socket) => {
     socket.on("join", (name) => {
         if (!name || !name.trim()) return
-
-        const alreadyExists = players.find(p => p.id === socket.id)
-        if (alreadyExists) return
 
         players.push({
             id: socket.id,
@@ -50,21 +48,20 @@ io.on("connection", (socket) => {
 
     socket.on("answer", (a) => {
         if (socket.id !== leader) return
-        if (a !== "Да" && a !== "Нет") return
         io.emit("answer", a)
     })
 
     socket.on("guess", (guess) => {
         if (!guess || !guess.trim()) return
 
-        const cleanGuess = guess.trim()
-        io.emit("guess", cleanGuess)
+        const clean = guess.trim()
+        io.emit("guess", clean)
 
-        if (cleanGuess.toLowerCase() === currentAnswer && currentAnswer !== "") {
+        if (clean.toLowerCase() === currentAnswer && currentAnswer !== "") {
             const winner = players.find(p => p.id === socket.id)
 
             if (winner) {
-                winner.score += 1
+                winner.score++
                 leader = socket.id
             }
 
@@ -72,7 +69,7 @@ io.on("connection", (socket) => {
             io.emit("leader", leader)
             io.emit("roundWon", socket.id)
             io.emit("image", currentImage)
-            io.emit("logMessage", `🏆 ${winner ? winner.name : "Игрок"} угадал правильно`)
+            io.emit("logMessage", `🏆 ${winner ? winner.name : "Игрок"} угадал`)
 
             currentAnswer = ""
             currentImage = ""

@@ -1,98 +1,90 @@
-const express = require("express")
-const http = require("http")
-const { Server } = require("socket.io")
+const socket = io()
 
-const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
+let myId = null
+let leaderId = null
+let selectedImage = ""
 
-app.use(express.static("public"))
+socket.on("connect", () => {
+    myId = socket.id
+})
 
-let players = []
-let leader = null
-let currentAnswer = ""
-let currentImage = ""
+function join() {
+    const name = document.getElementById("name").value
+    socket.emit("join", name)
+    document.getElementById("game").style.display = "block"
+}
 
-io.on("connection", (socket) => {
-    socket.on("join", (name) => {
-        if (!name || !name.trim()) return
+socket.on("players", (players) => {
+    const list = document.getElementById("players")
+    list.innerHTML = ""
 
-        const exists = players.find(p => p.id === socket.id)
-        if (exists) return
-
-        players.push({
-            id: socket.id,
-            name: name.trim(),
-            score: 0
-        })
-
-        if (!leader) leader = socket.id
-
-        io.emit("players", players)
-        io.emit("leader", leader)
-    })
-
-    socket.on("setRound", ({ answer, image }) => {
-        if (socket.id !== leader) return
-        if (!answer || !image) return
-
-        currentAnswer = answer.trim().toLowerCase()
-        currentImage = image
-
-        io.emit("hideImage")
-        io.emit("logMessage", "🎯 Новый раунд начался")
-    })
-
-    socket.on("question", (q) => {
-        if (!q || !q.trim()) return
-        io.emit("question", q.trim())
-    })
-
-    socket.on("answer", (a) => {
-        if (socket.id !== leader) return
-        if (a !== "Да" && a !== "Нет") return
-        io.emit("answer", a)
-    })
-
-    socket.on("guess", (guess) => {
-        if (!guess || !guess.trim()) return
-
-        const cleanGuess = guess.trim()
-        io.emit("guess", cleanGuess)
-
-        if (cleanGuess.toLowerCase() === currentAnswer && currentAnswer !== "") {
-            const winner = players.find(p => p.id === socket.id)
-
-            if (winner) {
-                winner.score += 1
-                leader = socket.id
-            }
-
-            io.emit("players", players)
-            io.emit("leader", leader)
-            io.emit("roundWon", socket.id)
-            io.emit("image", currentImage)
-            io.emit("logMessage", `🏆 ${winner ? winner.name : "Игрок"} угадал правильно`)
-
-            currentAnswer = ""
-            currentImage = ""
-        }
-    })
-
-    socket.on("disconnect", () => {
-        players = players.filter(p => p.id !== socket.id)
-
-        if (leader === socket.id) {
-            leader = players.length ? players[0].id : null
-        }
-
-        io.emit("players", players)
-        io.emit("leader", leader)
+    players.forEach(p => {
+        const li = document.createElement("li")
+        li.textContent = `${p.name} (${p.score})`
+        list.appendChild(li)
     })
 })
 
-const PORT = process.env.PORT || 3000
+socket.on("leader", (id) => {
+    leaderId = id
+    const isLeader = myId === id
 
-server.listen(PORT, () => {
-    console.log("Сервер запущен")
+    document.getElementById("role").innerText =
+        isLeader ? "Ты ведущий" : "Ты игрок"
+
+    document.getElementById("leaderPanel").style.display =
+        isLeader ? "block" : "none"
 })
+
+document.getElementById("imageUpload").addEventListener("change", e => {
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onload = () => selectedImage = reader.result
+    reader.readAsDataURL(file)
+})
+
+function startRound() {
+    const answer = document.getElementById("correctAnswer").value
+
+    socket.emit("setRound", {
+        answer,
+        image: selectedImage
+    })
+}
+
+socket.on("hideImage", () => {
+    document.getElementById("photo").style.display = "none"
+    document.getElementById("hiddenText").style.display = "block"
+})
+
+socket.on("image", (img) => {
+    const photo = document.getElementById("photo")
+    photo.src = img
+    photo.style.display = "block"
+    document.getElementById("hiddenText").style.display = "none"
+})
+
+function sendQuestion() {
+    const q = document.getElementById("question").value
+    socket.emit("question", q)
+}
+
+function sendAnswer(a) {
+    socket.emit("answer", a)
+}
+
+function sendGuess() {
+    const g = document.getElementById("guess").value
+    socket.emit("guess", g)
+}
+
+socket.on("question", q => log("❓ " + q))
+socket.on("answer", a => log("👉 " + a))
+socket.on("guess", g => log("💡 " + g))
+socket.on("logMessage", m => log(m))
+
+function log(t) {
+    const li = document.createElement("li")
+    li.textContent = t
+    document.getElementById("log").appendChild(li)
+}
