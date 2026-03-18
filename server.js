@@ -15,7 +15,16 @@ let currentImage = ""
 
 io.on("connection", (socket) => {
     socket.on("join", (name) => {
-        players.push({ id: socket.id, name, score: 0 })
+        if (!name || !name.trim()) return
+
+        const alreadyExists = players.find(p => p.id === socket.id)
+        if (alreadyExists) return
+
+        players.push({
+            id: socket.id,
+            name: name.trim(),
+            score: 0
+        })
 
         if (!leader) leader = socket.id
 
@@ -25,29 +34,37 @@ io.on("connection", (socket) => {
 
     socket.on("setRound", ({ answer, image }) => {
         if (socket.id !== leader) return
+        if (!answer || !image) return
 
         currentAnswer = answer.trim().toLowerCase()
         currentImage = image
 
-        io.emit("logMessage", "🎯 Новый раунд начался")
         io.emit("hideImage")
+        io.emit("logMessage", "🎯 Новый раунд начался")
     })
 
     socket.on("question", (q) => {
-        io.emit("question", q)
+        if (!q || !q.trim()) return
+        io.emit("question", q.trim())
     })
 
     socket.on("answer", (a) => {
+        if (socket.id !== leader) return
+        if (a !== "Да" && a !== "Нет") return
         io.emit("answer", a)
     })
 
     socket.on("guess", (guess) => {
-        io.emit("guess", guess)
+        if (!guess || !guess.trim()) return
 
-        if (guess.trim().toLowerCase() === currentAnswer && currentAnswer !== "") {
-            const player = players.find(p => p.id === socket.id)
-            if (player) {
-                player.score += 1
+        const cleanGuess = guess.trim()
+        io.emit("guess", cleanGuess)
+
+        if (cleanGuess.toLowerCase() === currentAnswer && currentAnswer !== "") {
+            const winner = players.find(p => p.id === socket.id)
+
+            if (winner) {
+                winner.score += 1
                 leader = socket.id
             }
 
@@ -55,8 +72,10 @@ io.on("connection", (socket) => {
             io.emit("leader", leader)
             io.emit("roundWon", socket.id)
             io.emit("image", currentImage)
+            io.emit("logMessage", `🏆 ${winner ? winner.name : "Игрок"} угадал правильно`)
 
             currentAnswer = ""
+            currentImage = ""
         }
     })
 
