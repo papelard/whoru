@@ -46,4 +46,88 @@
 <script src="script.js"></script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhoRu</title>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* контейнер — это просто блок по центру */
+.container {
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  background: rgba(255,255,255,0.06);
+  padding: 24px;
+  border-radius: 18px;
+}
+
+/* картинка */
+.hero-img {
+  width: 100%;
+  max-width: 250px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-size: 16px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <img src="/mystery.png" class="hero-img">
+
+  <h1>WhoRu</h1>
+
+  <input type="text" placeholder="Имя" id="nameInput">
+
+  <button onclick="enter()">Войти</button>
+
+</div>
+
+<script>
+function enter() {
+  const name = document.getElementById("nameInput").value;
+  if (!name) {
+    alert("Введите имя");
+    return;
+  }
+  alert("Ты вошёл как: " + name);
+}
+</script>
+
+</body>
 </html>
