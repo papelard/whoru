@@ -5,14 +5,27 @@ let leaderId = null
 let selectedImage = ""
 
 socket.on("connect", () => {
-    myId = socket.id
+  myId = socket.id
 })
 
 function join() {
-    const name = document.getElementById("name").value
-    socket.emit("join", name)
-    document.getElementById("game").style.display = "block"
+  const name = document.getElementById("name").value.trim();
+
+  if (!name) {
+    alert("Введите имя");
+    return;
+  }
+
+  socket.emit("join", name);
+  document.getElementById("game").style.display = "block";
 }
+
+const joinForm = document.getElementById("joinForm");
+
+joinForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  join();
+});
 
 socket.on("players", (players) => {
     const list = document.getElementById("players")
