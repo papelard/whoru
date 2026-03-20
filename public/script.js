@@ -12,6 +12,7 @@ const gameScreen = document.getElementById("game");
 const roleText = document.getElementById("role");
 const roomLabel = document.getElementById("roomLabel");
 const playersList = document.getElementById("players");
+const scoreboardList = document.getElementById("scoreboard");
 const leaderPanel = document.getElementById("leaderPanel");
 const guessBlock = document.getElementById("guessBlock");
 
@@ -116,6 +117,17 @@ socket.on("players", function (players) {
     const li = document.createElement("li");
     li.textContent = player.name;
     playersList.appendChild(li);
+  });
+});
+
+socket.on("scoreboard", function (scoreboard) {
+  if (!scoreboardList) return;
+  scoreboardList.innerHTML = "";
+
+  scoreboard.forEach(function (player) {
+    const li = document.createElement("li");
+    li.textContent = `${player.name} — Победы: ${player.wins}, Ведущий: ${player.leaderTurns}`;
+    scoreboardList.appendChild(li);
   });
 });
 

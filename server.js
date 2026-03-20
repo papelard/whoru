@@ -19,8 +19,33 @@ for (let i = 1; i <= MAX_ROOMS; i++) {
     leaderId: null,
     currentAnswer: "",
     currentImage: "",
-    roundActive: false
+    roundActive: false,
+    scores: {}
   };
+}
+
+function emitPlayersAndScores(roomCode) {
+  const room = rooms[roomCode];
+  if (!room) return;
+
+  io.to(roomCode).emit("players", room.players);
+
+  const scoreboard = room.players.map((player) => {
+    const stats = room.scores[player.id] || {
+      name: player.name,
+      wins: 0,
+      leaderTurns: 0
+    };
+
+    return {
+      id: player.id,
+      name: player.name,
+      wins: stats.wins || 0,
+      leaderTurns: stats.leaderTurns || 0
+    };
+  });
+
+  io.to(roomCode).emit("scoreboard", scoreboard);
 }
 
 io.on("connection", (socket) => {
@@ -61,11 +86,20 @@ io.on("connection", (socket) => {
 
     room.players.push(player);
 
-    if (!room.leaderId) {
-      room.leaderId = socket.id;
+    if (!room.scores[socket.id]) {
+      room.scores[socket.id] = {
+        name: cleanName,
+        wins: 0,
+        leaderTurns: 0
+      };
     }
 
-    io.to(cleanRoom).emit("players", room.players);
+    if (!room.leaderId) {
+      room.leaderId = socket.id;
+      room.scores[socket.id].leaderTurns += 1;
+    }
+
+    emitPlayersAndScores(cleanRoom);
 
     if (socket.id === room.leaderId) {
       socket.emit("role", "Ты ведущий");
@@ -133,7 +167,21 @@ io.on("connection", (socket) => {
       const oldLeaderId = room.leaderId;
       const newLeaderId = socket.id;
 
-      room.leaderId = newLeaderId;
+      if (!room.scores[newLeaderId]) {
+        const winner = room.players.find((p) => p.id === newLeaderId);
+        room.scores[newLeaderId] = {
+          name: winner ? winner.name : "Игрок",
+          wins: 0,
+          leaderTurns: 0
+        };
+      }
+
+      room.scores[newLeaderId].wins += 1;
+
+      if (oldLeaderId !== newLeaderId) {
+        room.leaderId = newLeaderId;
+        room.scores[newLeaderId].leaderTurns += 1;
+      }
 
       io.to(roomCode).emit("log", `Угадано: ${cleanGuess}`);
       io.to(roomCode).emit("revealPhoto", {
@@ -147,6 +195,8 @@ io.on("connection", (socket) => {
 
       io.to(newLeaderId).emit("role", "Ты ведущий");
       io.to(newLeaderId).emit("leader");
+
+      emitPlayersAndScores(roomCode);
 
       setTimeout(() => {
         room.currentAnswer = "";
@@ -172,12 +222,23 @@ io.on("connection", (socket) => {
       room.leaderId = room.players.length > 0 ? room.players[0].id : null;
 
       if (room.leaderId) {
+        if (!room.scores[room.leaderId]) {
+          const nextLeader = room.players.find((p) => p.id === room.leaderId);
+          room.scores[room.leaderId] = {
+            name: nextLeader ? nextLeader.name : "Игрок",
+            wins: 0,
+            leaderTurns: 0
+          };
+        }
+
+        room.scores[room.leaderId].leaderTurns += 1;
+
         io.to(room.leaderId).emit("role", "Ты ведущий");
         io.to(room.leaderId).emit("leader");
       }
     }
 
-    io.to(roomCode).emit("players", room.players);
+    emitPlayersAndScores(roomCode);
 
     if (room.players.length === 0) {
       room.password = "";
@@ -185,6 +246,7 @@ io.on("connection", (socket) => {
       room.currentAnswer = "";
       room.currentImage = "";
       room.roundActive = false;
+      room.scores = {};
     }
   });
 });

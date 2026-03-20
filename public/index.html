@@ -11,6 +11,7 @@
   <div class="app">
     <div class="card">
 
+      <!-- Вход -->
       <div id="joinScreen" class="screen">
         <div class="logo">WhoRu</div>
         <p class="subtitle">Комнаты 1–10 с паролем</p>
@@ -25,14 +26,23 @@
         <p id="joinError" class="error-text"></p>
       </div>
 
+      <!-- Игра -->
       <div id="game" class="screen" style="display:none;">
         <div class="topbar">
           <h2 id="role">Игра</h2>
           <p id="roomLabel" class="muted"></p>
         </div>
 
+        <!-- Игроки -->
         <ul id="players" class="players"></ul>
 
+        <!-- Счёт -->
+        <div class="panel stack">
+          <h3 class="section-title">🏆 Счёт</h3>
+          <ul id="scoreboard" class="scoreboard"></ul>
+        </div>
+
+        <!-- Панель ведущего -->
         <div id="leaderPanel" class="panel stack" style="display:none;">
           <h3 class="section-title">Панель ведущего</h3>
           <input id="correctAnswer" placeholder="Правильный ответ">
@@ -40,17 +50,20 @@
           <button onclick="startRound()">Старт раунда</button>
         </div>
 
+        <!-- Фото -->
         <div class="photo-box">
           <img id="photo" style="display:none;" alt="Фото">
           <p id="hiddenText" class="muted">Фото скрыто</p>
         </div>
 
+        <!-- Вопрос -->
         <div class="panel stack">
           <h3 class="section-title">Вопрос</h3>
           <input id="question" placeholder="Напиши вопрос">
           <button onclick="sendQuestion()">Спросить</button>
         </div>
 
+        <!-- Ответ -->
         <div id="answerButtons" class="panel stack">
           <h3 class="section-title">Ответ</h3>
           <div class="row">
@@ -59,12 +72,14 @@
           </div>
         </div>
 
+        <!-- Угадать -->
         <div id="guessBlock" class="panel stack">
           <h3 class="section-title">Угадать</h3>
           <input id="guess" placeholder="Твой ответ">
           <button onclick="sendGuess()">Угадать</button>
         </div>
 
+        <!-- Чат -->
         <div class="panel stack">
           <h3 class="section-title">Чат</h3>
           <ul id="log" class="log"></ul>
@@ -74,9 +89,11 @@
     </div>
   </div>
 
+  <!-- подпись -->
   <div class="signature">Made by Papeland</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
