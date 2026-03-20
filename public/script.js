@@ -23,8 +23,6 @@ const imageUpload = document.getElementById("imageUpload");
 const questionInput = document.getElementById("question");
 const guessInput = document.getElementById("guess");
 
-const guessBlock = document.getElementById("guessBlock");
-
 let myName = "";
 let isLeader = false;
 
@@ -39,6 +37,13 @@ function showPhoto(image) {
   photo.src = image;
   photo.style.display = "block";
   hiddenText.style.display = "none";
+}
+
+function clearRoundUI() {
+  logList.innerHTML = "";
+  questionInput.value = "";
+  guessInput.value = "";
+  hidePhoto();
 }
 
 joinForm.addEventListener("submit", function (e) {
@@ -67,7 +72,7 @@ socket.on("joinedRoom", function (data) {
   roomLabel.textContent = "Комната: " + data.roomCode;
   joinScreen.style.display = "none";
   gameScreen.style.display = "flex";
-  hidePhoto();
+  clearRoundUI();
 });
 
 socket.on("role", function (text) {
@@ -77,9 +82,6 @@ socket.on("role", function (text) {
 socket.on("leader", function () {
   isLeader = true;
   leaderPanel.style.display = "flex";
-  if (guessBlock) {
-    guessBlock.style.display = "none";
-  }
 });
 
 socket.on("players", function (players) {
@@ -93,10 +95,8 @@ socket.on("players", function (players) {
 });
 
 socket.on("roundStarted", function () {
-  logList.innerHTML = "";
-  questionInput.value = "";
-  guessInput.value = "";
-  hidePhoto();
+  clearRoundUI();
+  addLog("Раунд начался");
 });
 
 socket.on("revealPhoto", function (data) {
@@ -104,11 +104,15 @@ socket.on("revealPhoto", function (data) {
 });
 
 socket.on("log", function (text) {
+  addLog(text);
+});
+
+function addLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
   logList.appendChild(li);
   logList.scrollTop = logList.scrollHeight;
-});
+}
 
 function startRound() {
   if (!isLeader) return;
@@ -120,7 +124,6 @@ function startRound() {
   }
 
   const file = imageUpload.files && imageUpload.files[0];
-
   if (!file) {
     alert("Сначала выбери фото");
     return;
@@ -138,7 +141,7 @@ function startRound() {
 
     correctAnswerInput.value = "";
     imageUpload.value = "";
-    hidePhoto();
+    clearRoundUI();
   };
 
   reader.onerror = function () {
