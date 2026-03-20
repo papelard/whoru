@@ -20,11 +20,14 @@ const guessInput = document.getElementById("guess");
 let myName = "";
 let isLeader = false;
 
-joinForm.addEventListener("submit", (e) => {
+joinForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = nameInput.value.trim();
-  if (!name) return;
+  if (!name) {
+    alert("Введите имя");
+    return;
+  }
 
   myName = name;
   socket.emit("join", name);
@@ -33,41 +36,42 @@ joinForm.addEventListener("submit", (e) => {
   gameScreen.style.display = "block";
 });
 
-socket.on("role", (text) => {
+socket.on("role", function (text) {
   roleText.textContent = text;
 });
 
-socket.on("leader", () => {
+socket.on("leader", function () {
   isLeader = true;
   leaderPanel.style.display = "block";
 });
 
-socket.on("players", (players) => {
+socket.on("players", function (players) {
   playersList.innerHTML = "";
 
-  players.forEach((player) => {
+  players.forEach(function (player) {
     const li = document.createElement("li");
     li.textContent = player.name;
     playersList.appendChild(li);
   });
 });
 
-socket.on("roundStarted", (data) => {
+socket.on("roundStarted", function (data) {
+  logList.innerHTML = "";
+  questionInput.value = "";
+  guessInput.value = "";
+
   if (data.image) {
     photo.src = data.image;
     photo.style.display = "block";
     hiddenText.style.display = "none";
   } else {
+    photo.src = "";
     photo.style.display = "none";
     hiddenText.style.display = "block";
   }
-
-  logList.innerHTML = "";
-  questionInput.value = "";
-  guessInput.value = "";
 });
 
-socket.on("log", (text) => {
+socket.on("log", function (text) {
   const li = document.createElement("li");
   li.textContent = text;
   logList.appendChild(li);
@@ -77,40 +81,41 @@ function startRound() {
   if (!isLeader) return;
 
   const answer = correctAnswerInput.value.trim();
-  if (!answer) return alert("Введите ответ");
+  if (!answer) {
+    alert("Введите ответ");
+    return;
+  }
 
   const file = imageUpload.files[0];
 
   if (!file) {
-    socket.emit("startRound", { answer, image: "" });
+    socket.emit("startRound", { answer: answer, image: "" });
     correctAnswerInput.value = "";
     return;
   }
 
   const reader = new FileReader();
 
-  reader.onload = function (event) {
+  reader.onload = function (e) {
     socket.emit("startRound", {
-      answer,
-      image: event.target.result,
+      answer: answer,
+      image: e.target.result
     });
+    correctAnswerInput.value = "";
   };
 
   reader.readAsDataURL(file);
-
-  correctAnswerInput.value = "";
 }
 
 function sendQuestion() {
   const text = questionInput.value.trim();
   if (!text) return;
 
-  socket.emit("question", `${myName}: ${text}`);
+  socket.emit("question", myName + ": " + text);
   questionInput.value = "";
 }
 
 function sendAnswer(answer) {
-  if (!answer) return;
   socket.emit("answer", answer);
 }
 
@@ -121,3 +126,8 @@ function sendGuess() {
   socket.emit("guess", guess);
   guessInput.value = "";
 }
+
+window.startRound = startRound;
+window.sendQuestion = sendQuestion;
+window.sendAnswer = sendAnswer;
+window.sendGuess = sendGuess;
