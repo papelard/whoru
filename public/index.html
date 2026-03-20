@@ -41,7 +41,7 @@
         </div>
 
         <div class="photo-box">
-          <img id="photo" style="display:none;">
+          <img id="photo" style="display:none;" alt="Фото">
           <p id="hiddenText" class="muted">Фото скрыто</p>
         </div>
 
@@ -51,7 +51,7 @@
           <button onclick="sendQuestion()">Спросить</button>
         </div>
 
-        <div class="panel stack">
+        <div id="answerButtons" class="panel stack">
           <h3 class="section-title">Ответ</h3>
           <div class="row">
             <button class="half" onclick="sendAnswer('Да')">Да</button>
@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <div class="panel stack">
+        <div id="guessBlock" class="panel stack">
           <h3 class="section-title">Угадать</h3>
           <input id="guess" placeholder="Твой ответ">
           <button onclick="sendGuess()">Угадать</button>
@@ -69,17 +69,14 @@
           <h3 class="section-title">Чат</h3>
           <ul id="log" class="log"></ul>
         </div>
-
       </div>
 
     </div>
   </div>
 
-  <!-- 🔥 подпись -->
   <div class="signature">Made by Papeland</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
