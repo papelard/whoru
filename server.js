@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
   socket.on("join", (name) => {
     const player = {
       id: socket.id,
-      name: name || "Игрок"
+      name: name?.trim() || "Игрок",
     };
 
     players.push(player);
@@ -38,37 +38,41 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startRound", ({ answer, image }) => {
-    currentAnswer = answer || "";
+    currentAnswer = answer?.trim() || "";
     currentImage = image || "";
+
     io.emit("roundStarted", { image: currentImage });
     io.emit("log", "Раунд начался");
   });
 
   socket.on("question", (text) => {
-    io.emit("log", text);
+    if (!text?.trim()) return;
+    io.emit("log", text.trim());
   });
 
   socket.on("answer", (text) => {
-    io.emit("log", text);
+    if (!text?.trim()) return;
+    io.emit("log", text.trim());
   });
 
   socket.on("guess", (guess) => {
-    if (
-      currentAnswer &&
-      guess &&
-      guess.trim().toLowerCase() === currentAnswer.trim().toLowerCase()
-    ) {
-      io.emit("log", `Угадано: ${guess}`);
+    const cleanGuess = guess?.trim() || "";
+    const cleanAnswer = currentAnswer?.trim() || "";
+
+    if (!cleanGuess) return;
+
+    if (cleanAnswer && cleanGuess.toLowerCase() === cleanAnswer.toLowerCase()) {
+      io.emit("log", `Угадано: ${cleanGuess}`);
     } else {
-      io.emit("log", `Неверно: ${guess}`);
+      io.emit("log", `Неверно: ${cleanGuess}`);
     }
   });
 
   socket.on("disconnect", () => {
-    players = players.filter((p) => p.id !== socket.id);
+    players = players.filter((player) => player.id !== socket.id);
 
     if (leaderId === socket.id) {
-      leaderId = players.length ? players[0].id : null;
+      leaderId = players.length > 0 ? players[0].id : null;
 
       if (leaderId) {
         io.to(leaderId).emit("role", "Ты ведущий");
@@ -81,6 +85,7 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });
