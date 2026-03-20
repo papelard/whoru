@@ -76,19 +76,21 @@ socket.on("players", function (players) {
   });
 });
 
-socket.on("roundStarted", function (data) {
+socket.on("roundStarted", function () {
   logList.innerHTML = "";
   questionInput.value = "";
   guessInput.value = "";
 
+  photo.src = "";
+  photo.style.display = "none";
+  hiddenText.style.display = "block";
+});
+
+socket.on("revealPhoto", function (data) {
   if (data.image) {
     photo.src = data.image;
     photo.style.display = "block";
     hiddenText.style.display = "none";
-  } else {
-    photo.src = "";
-    photo.style.display = "none";
-    hiddenText.style.display = "block";
   }
 });
 

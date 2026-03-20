@@ -18,7 +18,8 @@ for (let i = 1; i <= MAX_ROOMS; i++) {
     players: [],
     leaderId: null,
     currentAnswer: "",
-    currentImage: ""
+    currentImage: "",
+    roundActive: false
   };
 }
 
@@ -87,11 +88,9 @@ io.on("connection", (socket) => {
 
     room.currentAnswer = (answer || "").trim();
     room.currentImage = image || "";
+    room.roundActive = true;
 
-    io.to(roomCode).emit("roundStarted", {
-      image: room.currentImage
-    });
-
+    io.to(roomCode).emit("roundStarted");
     io.to(roomCode).emit("log", "Раунд начался");
   });
 
@@ -120,13 +119,21 @@ io.on("connection", (socket) => {
     if (!roomCode || !rooms[roomCode]) return;
 
     const room = rooms[roomCode];
+    if (!room.roundActive) return;
+
     const cleanGuess = (guess || "").trim();
     const cleanAnswer = (room.currentAnswer || "").trim();
 
     if (!cleanGuess) return;
 
     if (cleanAnswer && cleanGuess.toLowerCase() === cleanAnswer.toLowerCase()) {
+      room.roundActive = false;
+
       io.to(roomCode).emit("log", `Угадано: ${cleanGuess}`);
+      io.to(roomCode).emit("revealPhoto", {
+        image: room.currentImage,
+        answer: room.currentAnswer
+      });
     } else {
       io.to(roomCode).emit("log", `Неверно: ${cleanGuess}`);
     }
@@ -155,6 +162,7 @@ io.on("connection", (socket) => {
       room.leaderId = null;
       room.currentAnswer = "";
       room.currentImage = "";
+      room.roundActive = false;
     }
   });
 });
