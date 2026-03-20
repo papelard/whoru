@@ -29,7 +29,7 @@ let myName = "";
 let isLeader = false;
 
 function hidePhoto() {
-  photo.src = "";
+  photo.removeAttribute("src");
   photo.style.display = "none";
   hiddenText.style.display = "block";
 }
@@ -77,7 +77,9 @@ socket.on("role", function (text) {
 socket.on("leader", function () {
   isLeader = true;
   leaderPanel.style.display = "flex";
-  if (guessBlock) guessBlock.style.display = "none";
+  if (guessBlock) {
+    guessBlock.style.display = "none";
+  }
 });
 
 socket.on("players", function (players) {
@@ -117,29 +119,30 @@ function startRound() {
     return;
   }
 
-  hidePhoto();
-
-  const file = imageUpload.files[0];
+  const file = imageUpload.files && imageUpload.files[0];
 
   if (!file) {
-    socket.emit("startRound", { answer, image: "" });
-    correctAnswerInput.value = "";
-    imageUpload.value = "";
+    alert("Сначала выбери фото");
     return;
   }
 
   const reader = new FileReader();
 
-  reader.onload = function (e) {
-    hidePhoto();
+  reader.onload = function (event) {
+    const imageBase64 = event.target.result;
 
     socket.emit("startRound", {
-      answer,
-      image: e.target.result
+      answer: answer,
+      image: imageBase64
     });
 
     correctAnswerInput.value = "";
     imageUpload.value = "";
+    hidePhoto();
+  };
+
+  reader.onerror = function () {
+    alert("Не удалось прочитать файл");
   };
 
   reader.readAsDataURL(file);
