@@ -1,95 +1,86 @@
-const express = require("express")
-const http = require("http")
-const { Server } = require("socket.io")
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const path = require("path");
 
-const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-// ❗ ВАЖНО — отдаём папку public
-app.use(express.static("public"))
+app.use(express.static(path.join(__dirname, "public")));
 
-let players = []
-let leader = null
-let currentAnswer = ""
-let currentImage = ""
+let players = [];
+let leaderId = null;
+let currentAnswer = "";
+let currentImage = "";
 
 io.on("connection", (socket) => {
-    socket.on("join", (name) => {
-        if (!name || !name.trim()) return
+  socket.on("join", (name) => {
+    const player = {
+      id: socket.id,
+      name: name || "Игрок"
+    };
 
-        players.push({
-            id: socket.id,
-            name: name.trim(),
-            score: 0
-        })
+    players.push(player);
 
-        if (!leader) leader = socket.id
+    if (!leaderId) {
+      leaderId = socket.id;
+    }
 
-        io.emit("players", players)
-        io.emit("leader", leader)
-    })
+    io.emit("players", players);
 
-    socket.on("setRound", ({ answer, image }) => {
-        if (socket.id !== leader) return
-        if (!answer || !image) return
+    if (socket.id === leaderId) {
+      socket.emit("role", "Ты ведущий");
+      socket.emit("leader");
+    } else {
+      socket.emit("role", "Ты игрок");
+    }
+  });
 
-        currentAnswer = answer.trim().toLowerCase()
-        currentImage = image
+  socket.on("startRound", ({ answer, image }) => {
+    currentAnswer = answer || "";
+    currentImage = image || "";
+    io.emit("roundStarted", { image: currentImage });
+    io.emit("log", "Раунд начался");
+  });
 
-        io.emit("hideImage")
-        io.emit("logMessage", "🎯 Новый раунд начался")
-    })
+  socket.on("question", (text) => {
+    io.emit("log", text);
+  });
 
-    socket.on("question", (q) => {
-        if (!q || !q.trim()) return
-        io.emit("question", q.trim())
-    })
+  socket.on("answer", (text) => {
+    io.emit("log", text);
+  });
 
-    socket.on("answer", (a) => {
-        if (socket.id !== leader) return
-        io.emit("answer", a)
-    })
+  socket.on("guess", (guess) => {
+    if (
+      currentAnswer &&
+      guess &&
+      guess.trim().toLowerCase() === currentAnswer.trim().toLowerCase()
+    ) {
+      io.emit("log", `Угадано: ${guess}`);
+    } else {
+      io.emit("log", `Неверно: ${guess}`);
+    }
+  });
 
-    socket.on("guess", (guess) => {
-        if (!guess || !guess.trim()) return
+  socket.on("disconnect", () => {
+    players = players.filter((p) => p.id !== socket.id);
 
-        const clean = guess.trim()
-        io.emit("guess", clean)
+    if (leaderId === socket.id) {
+      leaderId = players.length ? players[0].id : null;
 
-        if (clean.toLowerCase() === currentAnswer && currentAnswer !== "") {
-            const winner = players.find(p => p.id === socket.id)
+      if (leaderId) {
+        io.to(leaderId).emit("role", "Ты ведущий");
+        io.to(leaderId).emit("leader");
+      }
+    }
 
-            if (winner) {
-                winner.score++
-                leader = socket.id
-            }
+    io.emit("players", players);
+  });
+});
 
-            io.emit("players", players)
-            io.emit("leader", leader)
-            io.emit("roundWon", socket.id)
-            io.emit("image", currentImage)
-            io.emit("logMessage", `🏆 ${winner ? winner.name : "Игрок"} угадал`)
-
-            currentAnswer = ""
-            currentImage = ""
-        }
-    })
-
-    socket.on("disconnect", () => {
-        players = players.filter(p => p.id !== socket.id)
-
-        if (leader === socket.id) {
-            leader = players.length ? players[0].id : null
-        }
-
-        io.emit("players", players)
-        io.emit("leader", leader)
-    })
-})
-
-const PORT = process.env.PORT || 3000
-
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log("Сервер запущен")
-})
+  console.log(`Сервер запущен на порту ${PORT}`);
+});
