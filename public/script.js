@@ -28,26 +28,28 @@ let myName = "";
 let isLeader = false;
 
 function hidePhoto() {
+  if (!photo || !hiddenText) return;
   photo.removeAttribute("src");
   photo.style.display = "none";
   hiddenText.style.display = "block";
 }
 
 function showPhoto(image) {
-  if (!image) return;
+  if (!photo || !hiddenText || !image) return;
   photo.src = image;
   photo.style.display = "block";
   hiddenText.style.display = "none";
 }
 
 function clearRoundUI() {
-  logList.innerHTML = "";
-  questionInput.value = "";
-  guessInput.value = "";
+  if (logList) logList.innerHTML = "";
+  if (questionInput) questionInput.value = "";
+  if (guessInput) guessInput.value = "";
   hidePhoto();
 }
 
 function addLog(text) {
+  if (!logList) return;
   const li = document.createElement("li");
   li.textContent = text;
   logList.appendChild(li);
@@ -55,57 +57,59 @@ function addLog(text) {
 }
 
 function updateRoleUI() {
-  if (isLeader) {
-    leaderPanel.style.display = "flex";
-    guessBlock.style.display = "none";
-  } else {
-    leaderPanel.style.display = "none";
-    guessBlock.style.display = "flex";
+  if (leaderPanel) {
+    leaderPanel.style.display = isLeader ? "flex" : "none";
+  }
+  if (guessBlock) {
+    guessBlock.style.display = isLeader ? "none" : "flex";
   }
 }
 
-joinForm.addEventListener("submit", function (e) {
-  e.preventDefault();
+if (joinForm) {
+  joinForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  const name = nameInput.value.trim();
-  const roomCode = roomCodeInput.value.trim();
-  const password = roomPasswordInput.value.trim();
+    const name = nameInput?.value.trim() || "";
+    const roomCode = roomCodeInput?.value.trim() || "";
+    const password = roomPasswordInput?.value.trim() || "";
 
-  if (!name || !roomCode || !password) {
-    joinError.textContent = "Введите имя, номер комнаты и пароль";
-    return;
-  }
+    if (!name || !roomCode || !password) {
+      if (joinError) joinError.textContent = "Введите имя, номер комнаты и пароль";
+      return;
+    }
 
-  joinError.textContent = "";
-  myName = name;
+    if (joinError) joinError.textContent = "";
+    myName = name;
 
-  socket.emit("joinRoom", { name, roomCode, password });
-});
+    socket.emit("joinRoom", { name, roomCode, password });
+  });
+}
 
 socket.on("joinError", function (message) {
-  joinError.textContent = message;
+  if (joinError) joinError.textContent = message;
 });
 
 socket.on("joinedRoom", function (data) {
-  roomLabel.textContent = "Комната: " + data.roomCode;
-  joinScreen.style.display = "none";
-  gameScreen.style.display = "flex";
+  if (roomLabel) roomLabel.textContent = "Комната: " + data.roomCode;
+  if (joinScreen) joinScreen.style.display = "none";
+  if (gameScreen) gameScreen.style.display = "flex";
   clearRoundUI();
 });
 
 socket.on("role", function (text) {
-  roleText.textContent = text;
+  if (roleText) roleText.textContent = text;
   isLeader = text === "Ты ведущий";
   updateRoleUI();
 });
 
 socket.on("leader", function () {
   isLeader = true;
-  roleText.textContent = "Ты ведущий";
+  if (roleText) roleText.textContent = "Ты ведущий";
   updateRoleUI();
 });
 
 socket.on("players", function (players) {
+  if (!playersList) return;
   playersList.innerHTML = "";
 
   players.forEach(function (player) {
@@ -127,13 +131,8 @@ socket.on("revealPhoto", function (data) {
 socket.on("prepareNextRound", function () {
   clearRoundUI();
 
-  if (correctAnswerInput) {
-    correctAnswerInput.value = "";
-  }
-
-  if (imageUpload) {
-    imageUpload.value = "";
-  }
+  if (correctAnswerInput) correctAnswerInput.value = "";
+  if (imageUpload) imageUpload.value = "";
 });
 
 socket.on("log", function (text) {
@@ -143,13 +142,13 @@ socket.on("log", function (text) {
 function startRound() {
   if (!isLeader) return;
 
-  const answer = correctAnswerInput.value.trim();
+  const answer = correctAnswerInput?.value.trim() || "";
   if (!answer) {
     alert("Введите правильный ответ");
     return;
   }
 
-  const file = imageUpload.files && imageUpload.files[0];
+  const file = imageUpload?.files?.[0];
   if (!file) {
     alert("Сначала выбери фото");
     return;
@@ -158,15 +157,13 @@ function startRound() {
   const reader = new FileReader();
 
   reader.onload = function (event) {
-    const imageBase64 = event.target.result;
-
     socket.emit("startRound", {
       answer: answer,
-      image: imageBase64
+      image: event.target.result
     });
 
-    correctAnswerInput.value = "";
-    imageUpload.value = "";
+    if (correctAnswerInput) correctAnswerInput.value = "";
+    if (imageUpload) imageUpload.value = "";
     clearRoundUI();
   };
 
@@ -178,11 +175,11 @@ function startRound() {
 }
 
 function sendQuestion() {
-  const text = questionInput.value.trim();
+  const text = questionInput?.value.trim() || "";
   if (!text) return;
 
   socket.emit("question", `${myName}: ${text}`);
-  questionInput.value = "";
+  if (questionInput) questionInput.value = "";
 }
 
 function sendAnswer(answer) {
@@ -193,11 +190,11 @@ function sendAnswer(answer) {
 function sendGuess() {
   if (isLeader) return;
 
-  const guess = guessInput.value.trim();
+  const guess = guessInput?.value.trim() || "";
   if (!guess) return;
 
   socket.emit("guess", guess);
-  guessInput.value = "";
+  if (guessInput) guessInput.value = "";
 }
 
 window.startRound = startRound;
