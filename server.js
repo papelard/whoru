@@ -130,11 +130,31 @@ io.on("connection", (socket) => {
     if (cleanGuess.toLowerCase() === cleanAnswer.toLowerCase()) {
       room.roundActive = false;
 
+      const oldLeaderId = room.leaderId;
+      const newLeaderId = socket.id;
+
+      room.leaderId = newLeaderId;
+
       io.to(roomCode).emit("log", `Угадано: ${cleanGuess}`);
       io.to(roomCode).emit("revealPhoto", {
         image: room.currentImage,
         answer: room.currentAnswer
       });
+
+      if (oldLeaderId && oldLeaderId !== newLeaderId) {
+        io.to(oldLeaderId).emit("role", "Ты игрок");
+      }
+
+      io.to(newLeaderId).emit("role", "Ты ведущий");
+      io.to(newLeaderId).emit("leader");
+
+      setTimeout(() => {
+        room.currentAnswer = "";
+        room.currentImage = "";
+
+        io.to(roomCode).emit("prepareNextRound");
+        io.to(roomCode).emit("log", "Новый ведущий готовит следующий раунд");
+      }, 2500);
     } else {
       io.to(roomCode).emit("log", `Неверно: ${cleanGuess}`);
     }
