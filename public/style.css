@@ -171,6 +171,25 @@ button:hover {
   margin: 0;
 }
 
+/* 🔥 ПОДПИСЬ С ЭФФЕКТОМ */
+.signature {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.signature:hover {
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+
+/* 📱 мобильная адаптация */
 @media (max-width: 600px) {
   .app {
     align-items: flex-start;
