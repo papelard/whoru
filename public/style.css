@@ -25,11 +25,6 @@ body {
   border-radius: 24px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
   padding: 22px;
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
 }
 
 .screen {
@@ -82,6 +77,7 @@ body {
   justify-content: center;
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .players li {
@@ -141,6 +137,7 @@ button:hover {
 .log {
   list-style: none;
   padding: 0;
+  margin: 0;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -152,32 +149,38 @@ button:hover {
   margin-bottom: 6px;
 }
 
-/* Счёт */
 .scoreboard {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .scoreboard li {
   background: rgba(255,255,255,0.08);
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-/* Ошибка */
 .error-text {
   color: #ffaaaa;
   text-align: center;
 }
 
-/* Подпись */
 .signature {
   position: fixed;
-  bottom: 10px;
-  right: 14px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
-  opacity: 0.7;
-  pointer-events: none;
+  bottom: 14px;
+  right: 18px;
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  text-shadow: 0 0 10px rgba(255,255,255,0.25);
+}
+
+.signature:hover {
+  color: white;
+  text-shadow: 0 0 12px rgba(255,255,255,0.7);
 }
