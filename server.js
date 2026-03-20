@@ -9,32 +9,49 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-const rooms = {};
+const MAX_ROOMS = 10;
 
-function createRoomIfNeeded(roomCode) {
-  if (!rooms[roomCode]) {
-    rooms[roomCode] = {
-      players: [],
-      leaderId: null,
-      currentAnswer: "",
-      currentImage: ""
-    };
-  }
+const rooms = {};
+for (let i = 1; i <= MAX_ROOMS; i++) {
+  rooms[String(i)] = {
+    password: "",
+    players: [],
+    leaderId: null,
+    currentAnswer: "",
+    currentImage: ""
+  };
 }
 
 io.on("connection", (socket) => {
-  socket.on("joinRoom", ({ name, roomCode }) => {
-    const cleanName = name?.trim();
-    const cleanRoomCode = roomCode?.trim().toUpperCase();
+  socket.on("joinRoom", ({ name, roomCode, password }) => {
+    const cleanName = (name || "").trim();
+    const cleanRoom = String(roomCode || "").trim();
+    const cleanPassword = (password || "").trim();
 
-    if (!cleanName || !cleanRoomCode) return;
+    if (!cleanName || !cleanRoom || !cleanPassword) {
+      socket.emit("joinError", "Введите имя, комнату и пароль");
+      return;
+    }
 
-    createRoomIfNeeded(cleanRoomCode);
+    if (!rooms[cleanRoom]) {
+      socket.emit("joinError", "Такой комнаты нет. Доступны комнаты 1–10");
+      return;
+    }
 
-    const room = rooms[cleanRoomCode];
+    const room = rooms[cleanRoom];
 
-    socket.join(cleanRoomCode);
-    socket.roomCode = cleanRoomCode;
+    if (!room.password) {
+      room.password = cleanPassword;
+    } else if (room.password !== cleanPassword) {
+      socket.emit("joinError", "Неверный пароль комнаты");
+      return;
+    }
+
+    const alreadyInRoom = room.players.some((p) => p.id === socket.id);
+    if (alreadyInRoom) return;
+
+    socket.join(cleanRoom);
+    socket.roomCode = cleanRoom;
 
     const player = {
       id: socket.id,
@@ -47,7 +64,7 @@ io.on("connection", (socket) => {
       room.leaderId = socket.id;
     }
 
-    io.to(cleanRoomCode).emit("players", room.players);
+    io.to(cleanRoom).emit("players", room.players);
 
     if (socket.id === room.leaderId) {
       socket.emit("role", "Ты ведущий");
@@ -55,6 +72,10 @@ io.on("connection", (socket) => {
     } else {
       socket.emit("role", "Ты игрок");
     }
+
+    socket.emit("joinedRoom", {
+      roomCode: cleanRoom
+    });
   });
 
   socket.on("startRound", ({ answer, image }) => {
@@ -62,10 +83,9 @@ io.on("connection", (socket) => {
     if (!roomCode || !rooms[roomCode]) return;
 
     const room = rooms[roomCode];
-
     if (socket.id !== room.leaderId) return;
 
-    room.currentAnswer = answer?.trim() || "";
+    room.currentAnswer = (answer || "").trim();
     room.currentImage = image || "";
 
     io.to(roomCode).emit("roundStarted", {
@@ -79,7 +99,7 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     if (!roomCode || !rooms[roomCode]) return;
 
-    const cleanText = text?.trim();
+    const cleanText = (text || "").trim();
     if (!cleanText) return;
 
     io.to(roomCode).emit("log", cleanText);
@@ -89,7 +109,7 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     if (!roomCode || !rooms[roomCode]) return;
 
-    const cleanText = text?.trim();
+    const cleanText = (text || "").trim();
     if (!cleanText) return;
 
     io.to(roomCode).emit("log", `Ответ: ${cleanText}`);
@@ -100,8 +120,8 @@ io.on("connection", (socket) => {
     if (!roomCode || !rooms[roomCode]) return;
 
     const room = rooms[roomCode];
-    const cleanGuess = guess?.trim() || "";
-    const cleanAnswer = room.currentAnswer?.trim() || "";
+    const cleanGuess = (guess || "").trim();
+    const cleanAnswer = (room.currentAnswer || "").trim();
 
     if (!cleanGuess) return;
 
@@ -117,7 +137,6 @@ io.on("connection", (socket) => {
     if (!roomCode || !rooms[roomCode]) return;
 
     const room = rooms[roomCode];
-
     room.players = room.players.filter((player) => player.id !== socket.id);
 
     if (room.leaderId === socket.id) {
@@ -132,13 +151,15 @@ io.on("connection", (socket) => {
     io.to(roomCode).emit("players", room.players);
 
     if (room.players.length === 0) {
-      delete rooms[roomCode];
+      room.password = "";
+      room.leaderId = null;
+      room.currentAnswer = "";
+      room.currentImage = "";
     }
   });
 });
 
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });

@@ -3,6 +3,8 @@ const socket = io();
 const joinForm = document.getElementById("joinForm");
 const nameInput = document.getElementById("name");
 const roomCodeInput = document.getElementById("roomCode");
+const roomPasswordInput = document.getElementById("roomPassword");
+const joinError = document.getElementById("joinError");
 
 const joinScreen = document.getElementById("joinScreen");
 const gameScreen = document.getElementById("game");
@@ -22,29 +24,34 @@ const questionInput = document.getElementById("question");
 const guessInput = document.getElementById("guess");
 
 const guessBlock = document.getElementById("guessBlock");
-const answerButtons = document.getElementById("answerButtons");
 
 let myName = "";
-let myRoom = "";
 let isLeader = false;
 
 joinForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = nameInput.value.trim();
-  const roomCode = roomCodeInput.value.trim().toUpperCase();
+  const roomCode = roomCodeInput.value.trim();
+  const password = roomPasswordInput.value.trim();
 
-  if (!name || !roomCode) {
-    alert("Введите имя и код комнаты");
+  if (!name || !roomCode || !password) {
+    joinError.textContent = "Введите имя, номер комнаты и пароль";
     return;
   }
 
+  joinError.textContent = "";
   myName = name;
-  myRoom = roomCode;
 
-  socket.emit("joinRoom", { name, roomCode });
+  socket.emit("joinRoom", { name, roomCode, password });
+});
 
-  roomLabel.textContent = "Комната: " + roomCode;
+socket.on("joinError", function (message) {
+  joinError.textContent = message;
+});
+
+socket.on("joinedRoom", function (data) {
+  roomLabel.textContent = "Комната: " + data.roomCode;
   joinScreen.style.display = "none";
   gameScreen.style.display = "flex";
 });
@@ -70,7 +77,7 @@ socket.on("players", function (players) {
 });
 
 socket.on("roundStarted", function (data) {
-  clearRoundLog();
+  logList.innerHTML = "";
   questionInput.value = "";
   guessInput.value = "";
 
@@ -86,19 +93,11 @@ socket.on("roundStarted", function (data) {
 });
 
 socket.on("log", function (text) {
-  addLog(text);
-});
-
-function addLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
   logList.appendChild(li);
   logList.scrollTop = logList.scrollHeight;
-}
-
-function clearRoundLog() {
-  logList.innerHTML = "";
-}
+});
 
 function startRound() {
   if (!isLeader) return;
@@ -112,7 +111,7 @@ function startRound() {
   const file = imageUpload.files[0];
 
   if (!file) {
-    socket.emit("startRound", { answer: answer, image: "" });
+    socket.emit("startRound", { answer, image: "" });
     correctAnswerInput.value = "";
     imageUpload.value = "";
     return;
@@ -122,7 +121,7 @@ function startRound() {
 
   reader.onload = function (e) {
     socket.emit("startRound", {
-      answer: answer,
+      answer,
       image: e.target.result
     });
     correctAnswerInput.value = "";

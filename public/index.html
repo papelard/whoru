@@ -12,13 +12,16 @@
 
       <div id="joinScreen" class="screen">
         <div class="logo">WhoRu</div>
-        <p class="subtitle">Угадай, кто на фото</p>
+        <p class="subtitle">Комнаты 1–10 с паролем</p>
 
         <form id="joinForm" class="stack">
           <input id="name" placeholder="Имя" autocomplete="off">
-          <input id="roomCode" placeholder="Код комнаты" autocomplete="off">
+          <input id="roomCode" placeholder="Комната (1-10)" autocomplete="off">
+          <input id="roomPassword" placeholder="Пароль комнаты" autocomplete="off">
           <button type="submit">Войти</button>
         </form>
+
+        <p id="joinError" class="error-text"></p>
       </div>
 
       <div id="game" class="screen" style="display:none;">

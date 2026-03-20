@@ -164,6 +164,13 @@ button:hover {
   word-break: break-word;
 }
 
+.error-text {
+  color: #ffb3b3;
+  text-align: center;
+  min-height: 20px;
+  margin: 0;
+}
+
 @media (max-width: 600px) {
   .app {
     align-items: flex-start;
