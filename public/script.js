@@ -11,6 +11,7 @@ const roleText = document.getElementById("role");
 const roomLabel = document.getElementById("roomLabel");
 const playersList = document.getElementById("players");
 const leaderPanel = document.getElementById("leaderPanel");
+
 const photo = document.getElementById("photo");
 const hiddenText = document.getElementById("hiddenText");
 const logList = document.getElementById("log");
@@ -45,7 +46,7 @@ joinForm.addEventListener("submit", function (e) {
 
   roomLabel.textContent = "Комната: " + roomCode;
   joinScreen.style.display = "none";
-  gameScreen.style.display = "block";
+  gameScreen.style.display = "flex";
 });
 
 socket.on("role", function (text) {
@@ -54,11 +55,8 @@ socket.on("role", function (text) {
 
 socket.on("leader", function () {
   isLeader = true;
-  leaderPanel.style.display = "block";
-
-  if (guessBlock) {
-    guessBlock.style.display = "none";
-  }
+  leaderPanel.style.display = "flex";
+  if (guessBlock) guessBlock.style.display = "none";
 });
 
 socket.on("players", function (players) {
@@ -72,7 +70,7 @@ socket.on("players", function (players) {
 });
 
 socket.on("roundStarted", function (data) {
-  logList.innerHTML = "";
+  clearRoundLog();
   questionInput.value = "";
   guessInput.value = "";
 
@@ -88,10 +86,19 @@ socket.on("roundStarted", function (data) {
 });
 
 socket.on("log", function (text) {
+  addLog(text);
+});
+
+function addLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
   logList.appendChild(li);
-});
+  logList.scrollTop = logList.scrollHeight;
+}
+
+function clearRoundLog() {
+  logList.innerHTML = "";
+}
 
 function startRound() {
   if (!isLeader) return;
@@ -107,6 +114,7 @@ function startRound() {
   if (!file) {
     socket.emit("startRound", { answer: answer, image: "" });
     correctAnswerInput.value = "";
+    imageUpload.value = "";
     return;
   }
 
@@ -118,6 +126,7 @@ function startRound() {
       image: e.target.result
     });
     correctAnswerInput.value = "";
+    imageUpload.value = "";
   };
 
   reader.readAsDataURL(file);
@@ -127,11 +136,12 @@ function sendQuestion() {
   const text = questionInput.value.trim();
   if (!text) return;
 
-  socket.emit("question", myName + ": " + text);
+  socket.emit("question", `${myName}: ${text}`);
   questionInput.value = "";
 }
 
 function sendAnswer(answer) {
+  if (!answer) return;
   socket.emit("answer", answer);
 }
 

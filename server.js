@@ -9,27 +9,47 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-let players = [];
-let leaderId = null;
-let currentAnswer = "";
-let currentImage = "";
+const rooms = {};
+
+function createRoomIfNeeded(roomCode) {
+  if (!rooms[roomCode]) {
+    rooms[roomCode] = {
+      players: [],
+      leaderId: null,
+      currentAnswer: "",
+      currentImage: ""
+    };
+  }
+}
 
 io.on("connection", (socket) => {
-  socket.on("join", (name) => {
+  socket.on("joinRoom", ({ name, roomCode }) => {
+    const cleanName = name?.trim();
+    const cleanRoomCode = roomCode?.trim().toUpperCase();
+
+    if (!cleanName || !cleanRoomCode) return;
+
+    createRoomIfNeeded(cleanRoomCode);
+
+    const room = rooms[cleanRoomCode];
+
+    socket.join(cleanRoomCode);
+    socket.roomCode = cleanRoomCode;
+
     const player = {
       id: socket.id,
-      name: name?.trim() || "Игрок",
+      name: cleanName
     };
 
-    players.push(player);
+    room.players.push(player);
 
-    if (!leaderId) {
-      leaderId = socket.id;
+    if (!room.leaderId) {
+      room.leaderId = socket.id;
     }
 
-    io.emit("players", players);
+    io.to(cleanRoomCode).emit("players", room.players);
 
-    if (socket.id === leaderId) {
+    if (socket.id === room.leaderId) {
       socket.emit("role", "Ты ведущий");
       socket.emit("leader");
     } else {
@@ -38,49 +58,82 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startRound", ({ answer, image }) => {
-    currentAnswer = answer?.trim() || "";
-    currentImage = image || "";
+    const roomCode = socket.roomCode;
+    if (!roomCode || !rooms[roomCode]) return;
 
-    io.emit("roundStarted", { image: currentImage });
-    io.emit("log", "Раунд начался");
+    const room = rooms[roomCode];
+
+    if (socket.id !== room.leaderId) return;
+
+    room.currentAnswer = answer?.trim() || "";
+    room.currentImage = image || "";
+
+    io.to(roomCode).emit("roundStarted", {
+      image: room.currentImage
+    });
+
+    io.to(roomCode).emit("log", "Раунд начался");
   });
 
   socket.on("question", (text) => {
-    if (!text?.trim()) return;
-    io.emit("log", text.trim());
+    const roomCode = socket.roomCode;
+    if (!roomCode || !rooms[roomCode]) return;
+
+    const cleanText = text?.trim();
+    if (!cleanText) return;
+
+    io.to(roomCode).emit("log", cleanText);
   });
 
   socket.on("answer", (text) => {
-    if (!text?.trim()) return;
-    io.emit("log", text.trim());
+    const roomCode = socket.roomCode;
+    if (!roomCode || !rooms[roomCode]) return;
+
+    const cleanText = text?.trim();
+    if (!cleanText) return;
+
+    io.to(roomCode).emit("log", `Ответ: ${cleanText}`);
   });
 
   socket.on("guess", (guess) => {
+    const roomCode = socket.roomCode;
+    if (!roomCode || !rooms[roomCode]) return;
+
+    const room = rooms[roomCode];
     const cleanGuess = guess?.trim() || "";
-    const cleanAnswer = currentAnswer?.trim() || "";
+    const cleanAnswer = room.currentAnswer?.trim() || "";
 
     if (!cleanGuess) return;
 
     if (cleanAnswer && cleanGuess.toLowerCase() === cleanAnswer.toLowerCase()) {
-      io.emit("log", `Угадано: ${cleanGuess}`);
+      io.to(roomCode).emit("log", `Угадано: ${cleanGuess}`);
     } else {
-      io.emit("log", `Неверно: ${cleanGuess}`);
+      io.to(roomCode).emit("log", `Неверно: ${cleanGuess}`);
     }
   });
 
   socket.on("disconnect", () => {
-    players = players.filter((player) => player.id !== socket.id);
+    const roomCode = socket.roomCode;
+    if (!roomCode || !rooms[roomCode]) return;
 
-    if (leaderId === socket.id) {
-      leaderId = players.length > 0 ? players[0].id : null;
+    const room = rooms[roomCode];
 
-      if (leaderId) {
-        io.to(leaderId).emit("role", "Ты ведущий");
-        io.to(leaderId).emit("leader");
+    room.players = room.players.filter((player) => player.id !== socket.id);
+
+    if (room.leaderId === socket.id) {
+      room.leaderId = room.players.length > 0 ? room.players[0].id : null;
+
+      if (room.leaderId) {
+        io.to(room.leaderId).emit("role", "Ты ведущий");
+        io.to(room.leaderId).emit("leader");
       }
     }
 
-    io.emit("players", players);
+    io.to(roomCode).emit("players", room.players);
+
+    if (room.players.length === 0) {
+      delete rooms[roomCode];
+    }
   });
 });
 

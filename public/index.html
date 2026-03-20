@@ -7,64 +7,72 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app">
+    <div class="card">
 
-  <div class="container">
+      <div id="joinScreen" class="screen">
+        <div class="logo">WhoRu</div>
+        <p class="subtitle">Угадай, кто на фото</p>
 
-    <!-- ВХОД -->
-    <div id="joinScreen">
-      <h1>WhoRu</h1>
+        <form id="joinForm" class="stack">
+          <input id="name" placeholder="Имя" autocomplete="off">
+          <input id="roomCode" placeholder="Код комнаты" autocomplete="off">
+          <button type="submit">Войти</button>
+        </form>
+      </div>
 
-      <form id="joinForm">
-        <input id="name" placeholder="Имя">
-        <input id="roomCode" placeholder="Код комнаты">
-        <button type="submit">Войти</button>
-      </form>
+      <div id="game" class="screen" style="display:none;">
+        <div class="topbar">
+          <div>
+            <h2 id="role">Игра</h2>
+            <p id="roomLabel" class="muted"></p>
+          </div>
+        </div>
+
+        <ul id="players" class="players"></ul>
+
+        <div id="leaderPanel" class="panel stack" style="display:none;">
+          <h3 class="section-title">Панель ведущего</h3>
+          <input id="correctAnswer" placeholder="Правильный ответ" autocomplete="off">
+          <input type="file" id="imageUpload" accept="image/*">
+          <button onclick="startRound()">Старт раунда</button>
+        </div>
+
+        <div class="photo-box">
+          <img id="photo" alt="Фото" style="display:none;">
+          <p id="hiddenText" class="muted">Фото скрыто</p>
+        </div>
+
+        <div class="panel stack">
+          <h3 class="section-title">Вопрос</h3>
+          <input id="question" placeholder="Напиши вопрос" autocomplete="off">
+          <button onclick="sendQuestion()">Спросить</button>
+        </div>
+
+        <div id="answerButtons" class="panel stack">
+          <h3 class="section-title">Ответ</h3>
+          <div class="row">
+            <button class="half" onclick="sendAnswer('Да')">Да</button>
+            <button class="half" onclick="sendAnswer('Нет')">Нет</button>
+          </div>
+        </div>
+
+        <div id="guessBlock" class="panel stack">
+          <h3 class="section-title">Угадать</h3>
+          <input id="guess" placeholder="Твой ответ" autocomplete="off">
+          <button onclick="sendGuess()">Угадать</button>
+        </div>
+
+        <div class="panel stack">
+          <h3 class="section-title">Чат раунда</h3>
+          <ul id="log" class="log"></ul>
+        </div>
+      </div>
+
     </div>
-
-    <!-- ИГРА -->
-    <div id="game" style="display:none;">
-
-      <h3 id="role"></h3>
-      <p id="roomLabel"></p>
-
-      <ul id="players"></ul>
-
-      <!-- ПАНЕЛЬ ВЕДУЩЕГО -->
-      <div id="leaderPanel" style="display:none;">
-        <input id="correctAnswer" placeholder="Правильный ответ">
-        <input type="file" id="imageUpload">
-        <button onclick="startRound()">Старт</button>
-      </div>
-
-      <!-- ФОТО -->
-      <img id="photo" style="display:none; max-width:200px; width:100%; border-radius:12px; margin-top:10px;">
-      <p id="hiddenText">Фото скрыто</p>
-
-      <!-- ВОПРОС -->
-      <input id="question" placeholder="Вопрос">
-      <button onclick="sendQuestion()">Спросить</button>
-
-      <!-- ДА / НЕТ -->
-      <div id="answerButtons" class="answer-buttons">
-        <button onclick="sendAnswer('Да')">Да</button>
-        <button onclick="sendAnswer('Нет')">Нет</button>
-      </div>
-
-      <!-- УГАДЫВАНИЕ (ТОЛЬКО ДЛЯ ИГРОКОВ) -->
-      <div id="guessBlock">
-        <input id="guess" placeholder="Твой ответ">
-        <button onclick="sendGuess()">Угадать</button>
-      </div>
-
-      <!-- ЛОГ -->
-      <ul id="log"></ul>
-
-    </div>
-
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
