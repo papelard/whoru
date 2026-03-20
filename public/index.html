@@ -10,46 +10,61 @@
 
   <div class="container">
 
+    <!-- ВХОД -->
     <div id="joinScreen">
       <h1>WhoRu</h1>
 
       <form id="joinForm">
         <input id="name" placeholder="Имя">
+        <input id="roomCode" placeholder="Код комнаты">
         <button type="submit">Войти</button>
       </form>
     </div>
 
+    <!-- ИГРА -->
     <div id="game" style="display:none;">
+
       <h3 id="role"></h3>
+      <p id="roomLabel"></p>
 
       <ul id="players"></ul>
 
+      <!-- ПАНЕЛЬ ВЕДУЩЕГО -->
       <div id="leaderPanel" style="display:none;">
-        <input id="correctAnswer" placeholder="Ответ">
+        <input id="correctAnswer" placeholder="Правильный ответ">
         <input type="file" id="imageUpload">
         <button onclick="startRound()">Старт</button>
       </div>
 
+      <!-- ФОТО -->
       <img id="photo" style="display:none; max-width:200px; width:100%; border-radius:12px; margin-top:10px;">
       <p id="hiddenText">Фото скрыто</p>
 
+      <!-- ВОПРОС -->
       <input id="question" placeholder="Вопрос">
       <button onclick="sendQuestion()">Спросить</button>
 
-      <div class="answer-buttons">
+      <!-- ДА / НЕТ -->
+      <div id="answerButtons" class="answer-buttons">
         <button onclick="sendAnswer('Да')">Да</button>
         <button onclick="sendAnswer('Нет')">Нет</button>
       </div>
 
-      <input id="guess" placeholder="Кто это?">
-      <button onclick="sendGuess()">Угадать</button>
+      <!-- УГАДЫВАНИЕ (ТОЛЬКО ДЛЯ ИГРОКОВ) -->
+      <div id="guessBlock">
+        <input id="guess" placeholder="Твой ответ">
+        <button onclick="sendGuess()">Угадать</button>
+      </div>
 
+      <!-- ЛОГ -->
       <ul id="log"></ul>
+
     </div>
 
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>

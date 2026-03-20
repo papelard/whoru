@@ -2,10 +2,13 @@ const socket = io();
 
 const joinForm = document.getElementById("joinForm");
 const nameInput = document.getElementById("name");
+const roomCodeInput = document.getElementById("roomCode");
+
 const joinScreen = document.getElementById("joinScreen");
 const gameScreen = document.getElementById("game");
 
 const roleText = document.getElementById("role");
+const roomLabel = document.getElementById("roomLabel");
 const playersList = document.getElementById("players");
 const leaderPanel = document.getElementById("leaderPanel");
 const photo = document.getElementById("photo");
@@ -17,21 +20,30 @@ const imageUpload = document.getElementById("imageUpload");
 const questionInput = document.getElementById("question");
 const guessInput = document.getElementById("guess");
 
+const guessBlock = document.getElementById("guessBlock");
+const answerButtons = document.getElementById("answerButtons");
+
 let myName = "";
+let myRoom = "";
 let isLeader = false;
 
 joinForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = nameInput.value.trim();
-  if (!name) {
-    alert("Введите имя");
+  const roomCode = roomCodeInput.value.trim().toUpperCase();
+
+  if (!name || !roomCode) {
+    alert("Введите имя и код комнаты");
     return;
   }
 
   myName = name;
-  socket.emit("join", name);
+  myRoom = roomCode;
 
+  socket.emit("joinRoom", { name, roomCode });
+
+  roomLabel.textContent = "Комната: " + roomCode;
   joinScreen.style.display = "none";
   gameScreen.style.display = "block";
 });
@@ -43,6 +55,10 @@ socket.on("role", function (text) {
 socket.on("leader", function () {
   isLeader = true;
   leaderPanel.style.display = "block";
+
+  if (guessBlock) {
+    guessBlock.style.display = "none";
+  }
 });
 
 socket.on("players", function (players) {
@@ -82,7 +98,7 @@ function startRound() {
 
   const answer = correctAnswerInput.value.trim();
   if (!answer) {
-    alert("Введите ответ");
+    alert("Введите правильный ответ");
     return;
   }
 
@@ -120,6 +136,8 @@ function sendAnswer(answer) {
 }
 
 function sendGuess() {
+  if (isLeader) return;
+
   const guess = guessInput.value.trim();
   if (!guess) return;
 
