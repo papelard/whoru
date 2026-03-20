@@ -25,6 +25,11 @@ body {
   border-radius: 24px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
   padding: 22px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
 }
 
 .screen {
@@ -70,6 +75,7 @@ body {
   margin: 0 0 6px;
 }
 
+/* Игроки */
 .players {
   display: flex;
   flex-wrap: wrap;
@@ -86,6 +92,7 @@ body {
   border-radius: 10px;
 }
 
+/* Фото */
 .photo-box {
   background: rgba(255,255,255,0.05);
   border-radius: 18px;
@@ -101,7 +108,8 @@ body {
   border-radius: 16px;
 }
 
-input, button {
+/* Inputs */
+input, select, button {
   width: 100%;
   border-radius: 12px;
   border: none;
@@ -109,11 +117,20 @@ input, button {
   font-size: 16px;
 }
 
+/* Select (пак) */
+select {
+  background: #f2f2f2;
+  color: #000;
+  cursor: pointer;
+}
+
+/* Input */
 input {
   background: #f2f2f2;
   color: #000;
 }
 
+/* Кнопки */
 button {
   background: #4285f4;
   color: white;
@@ -125,6 +142,16 @@ button:hover {
   opacity: 0.9;
 }
 
+/* Кнопка рандома отдельно */
+button[onclick="randomFromPack()"] {
+  background: #22c55e;
+}
+
+button[onclick="randomFromPack()"]:hover {
+  background: #16a34a;
+}
+
+/* Ответ кнопки */
 .row {
   display: flex;
   gap: 10px;
@@ -134,6 +161,7 @@ button:hover {
   flex: 1;
 }
 
+/* Чат */
 .log {
   list-style: none;
   padding: 0;
@@ -149,6 +177,7 @@ button:hover {
   margin-bottom: 6px;
 }
 
+/* Счёт */
 .scoreboard {
   list-style: none;
   padding: 0;
@@ -162,11 +191,13 @@ button:hover {
   margin-bottom: 8px;
 }
 
+/* Ошибка */
 .error-text {
   color: #ffaaaa;
   text-align: center;
 }
 
+/* Подпись */
 .signature {
   position: fixed;
   bottom: 14px;
@@ -183,4 +214,30 @@ button:hover {
 .signature:hover {
   color: white;
   text-shadow: 0 0 12px rgba(255,255,255,0.7);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+  .app {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .logo {
+    font-size: 36px;
+  }
+
+  input, button, select {
+    font-size: 15px;
+  }
+
+  .photo-box {
+    min-height: 180px;
+  }
 }

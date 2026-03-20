@@ -40,6 +40,10 @@
 
         <div id="leaderPanel" class="panel stack" style="display:none;">
           <h3 class="section-title">Панель ведущего</h3>
+
+          <select id="packSelect"></select>
+          <button type="button" onclick="randomFromPack()">🎲 Рандом из пака</button>
+
           <input id="correctAnswer" placeholder="Правильный ответ">
           <input type="file" id="imageUpload" accept="image/*">
           <button onclick="startRound()">Старт раунда</button>

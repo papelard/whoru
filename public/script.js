@@ -24,9 +24,12 @@ const correctAnswerInput = document.getElementById("correctAnswer");
 const imageUpload = document.getElementById("imageUpload");
 const questionInput = document.getElementById("question");
 const guessInput = document.getElementById("guess");
+const packSelect = document.getElementById("packSelect");
 
 let myName = "";
 let isLeader = false;
+let allPacks = {};
+let selectedPackImage = null;
 
 function hidePhoto() {
   if (!photo || !hiddenText) return;
@@ -85,6 +88,20 @@ if (joinForm) {
     socket.emit("joinRoom", { name, roomCode, password });
   });
 }
+
+socket.on("packs", function (packs) {
+  allPacks = packs || {};
+
+  if (!packSelect) return;
+  packSelect.innerHTML = "";
+
+  Object.keys(allPacks).forEach(function (packName) {
+    const option = document.createElement("option");
+    option.value = packName;
+    option.textContent = packName;
+    packSelect.appendChild(option);
+  });
+});
 
 socket.on("joinError", function (message) {
   if (joinError) joinError.textContent = message;
@@ -145,11 +162,29 @@ socket.on("prepareNextRound", function () {
 
   if (correctAnswerInput) correctAnswerInput.value = "";
   if (imageUpload) imageUpload.value = "";
+  selectedPackImage = null;
 });
 
 socket.on("log", function (text) {
   addLog(text);
 });
+
+function randomFromPack() {
+  if (!packSelect) return;
+
+  const packName = packSelect.value;
+  const pack = allPacks[packName];
+
+  if (!pack || !pack.length) return;
+
+  const randomItem = pack[Math.floor(Math.random() * pack.length)];
+
+  if (correctAnswerInput) {
+    correctAnswerInput.value = randomItem.name;
+  }
+
+  selectedPackImage = randomItem.image;
+}
 
 function startRound() {
   if (!isLeader) return;
@@ -160,9 +195,22 @@ function startRound() {
     return;
   }
 
+  if (selectedPackImage) {
+    socket.emit("startRound", {
+      answer: answer,
+      image: selectedPackImage
+    });
+
+    if (correctAnswerInput) correctAnswerInput.value = "";
+    if (imageUpload) imageUpload.value = "";
+    selectedPackImage = null;
+    clearRoundUI();
+    return;
+  }
+
   const file = imageUpload?.files?.[0];
   if (!file) {
-    alert("Сначала выбери фото");
+    alert("Сначала выбери фото или нажми рандом из пака");
     return;
   }
 
@@ -176,6 +224,7 @@ function startRound() {
 
     if (correctAnswerInput) correctAnswerInput.value = "";
     if (imageUpload) imageUpload.value = "";
+    selectedPackImage = null;
     clearRoundUI();
   };
 
@@ -213,3 +262,4 @@ window.startRound = startRound;
 window.sendQuestion = sendQuestion;
 window.sendAnswer = sendAnswer;
 window.sendGuess = sendGuess;
+window.randomFromPack = randomFromPack;
