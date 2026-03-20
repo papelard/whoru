@@ -28,6 +28,19 @@ const guessBlock = document.getElementById("guessBlock");
 let myName = "";
 let isLeader = false;
 
+function hidePhoto() {
+  photo.src = "";
+  photo.style.display = "none";
+  hiddenText.style.display = "block";
+}
+
+function showPhoto(image) {
+  if (!image) return;
+  photo.src = image;
+  photo.style.display = "block";
+  hiddenText.style.display = "none";
+}
+
 joinForm.addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -54,6 +67,7 @@ socket.on("joinedRoom", function (data) {
   roomLabel.textContent = "Комната: " + data.roomCode;
   joinScreen.style.display = "none";
   gameScreen.style.display = "flex";
+  hidePhoto();
 });
 
 socket.on("role", function (text) {
@@ -80,18 +94,11 @@ socket.on("roundStarted", function () {
   logList.innerHTML = "";
   questionInput.value = "";
   guessInput.value = "";
-
-  photo.src = "";
-  photo.style.display = "none";
-  hiddenText.style.display = "block";
+  hidePhoto();
 });
 
 socket.on("revealPhoto", function (data) {
-  if (data.image) {
-    photo.src = data.image;
-    photo.style.display = "block";
-    hiddenText.style.display = "none";
-  }
+  showPhoto(data.image);
 });
 
 socket.on("log", function (text) {
@@ -110,6 +117,8 @@ function startRound() {
     return;
   }
 
+  hidePhoto();
+
   const file = imageUpload.files[0];
 
   if (!file) {
@@ -122,10 +131,13 @@ function startRound() {
   const reader = new FileReader();
 
   reader.onload = function (e) {
+    hidePhoto();
+
     socket.emit("startRound", {
       answer,
       image: e.target.result
     });
+
     correctAnswerInput.value = "";
     imageUpload.value = "";
   };
