@@ -27,33 +27,31 @@
 
       <div id="game" class="screen" style="display:none;">
         <div class="topbar">
-          <div>
-            <h2 id="role">Игра</h2>
-            <p id="roomLabel" class="muted"></p>
-          </div>
+          <h2 id="role">Игра</h2>
+          <p id="roomLabel" class="muted"></p>
         </div>
 
         <ul id="players" class="players"></ul>
 
         <div id="leaderPanel" class="panel stack" style="display:none;">
           <h3 class="section-title">Панель ведущего</h3>
-          <input id="correctAnswer" placeholder="Правильный ответ" autocomplete="off">
+          <input id="correctAnswer" placeholder="Правильный ответ">
           <input type="file" id="imageUpload" accept="image/*">
           <button onclick="startRound()">Старт раунда</button>
         </div>
 
         <div class="photo-box">
-          <img id="photo" alt="Фото" style="display:none;">
+          <img id="photo" style="display:none;">
           <p id="hiddenText" class="muted">Фото скрыто</p>
         </div>
 
         <div class="panel stack">
           <h3 class="section-title">Вопрос</h3>
-          <input id="question" placeholder="Напиши вопрос" autocomplete="off">
+          <input id="question" placeholder="Напиши вопрос">
           <button onclick="sendQuestion()">Спросить</button>
         </div>
 
-        <div id="answerButtons" class="panel stack">
+        <div class="panel stack">
           <h3 class="section-title">Ответ</h3>
           <div class="row">
             <button class="half" onclick="sendAnswer('Да')">Да</button>
@@ -61,25 +59,27 @@
           </div>
         </div>
 
-        <div id="guessBlock" class="panel stack">
+        <div class="panel stack">
           <h3 class="section-title">Угадать</h3>
-          <input id="guess" placeholder="Твой ответ" autocomplete="off">
+          <input id="guess" placeholder="Твой ответ">
           <button onclick="sendGuess()">Угадать</button>
         </div>
 
         <div class="panel stack">
-          <h3 class="section-title">Чат раунда</h3>
+          <h3 class="section-title">Чат</h3>
           <ul id="log" class="log"></ul>
         </div>
+
       </div>
 
     </div>
   </div>
 
-  <!-- ПОДПИСЬ -->
+  <!-- 🔥 подпись -->
   <div class="signature">Made by Papeland</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
