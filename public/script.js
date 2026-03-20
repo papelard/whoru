@@ -1,103 +1,123 @@
-const socket = io()
-
-let myId = null
-let leaderId = null
-let selectedImage = ""
-
-socket.on("connect", () => {
-  myId = socket.id
-})
-
-function join() {
-  const name = document.getElementById("name").value.trim();
-
-  if (!name) {
-    alert("Введите имя");
-    return;
-  }
-
-  socket.emit("join", name);
-  document.getElementById("game").style.display = "block";
-}
+const socket = io();
 
 const joinForm = document.getElementById("joinForm");
+const nameInput = document.getElementById("name");
+const joinScreen = document.getElementById("joinScreen");
+const gameScreen = document.getElementById("game");
+
+const roleText = document.getElementById("role");
+const playersList = document.getElementById("players");
+const leaderPanel = document.getElementById("leaderPanel");
+const photo = document.getElementById("photo");
+const hiddenText = document.getElementById("hiddenText");
+const logList = document.getElementById("log");
+
+const correctAnswerInput = document.getElementById("correctAnswer");
+const imageUpload = document.getElementById("imageUpload");
+const questionInput = document.getElementById("question");
+const guessInput = document.getElementById("guess");
+
+let myName = "";
+let isLeader = false;
 
 joinForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  join();
+
+  const name = nameInput.value.trim();
+  if (!name) return;
+
+  myName = name;
+  socket.emit("join", name);
+
+  joinScreen.style.display = "none";
+  gameScreen.style.display = "block";
+});
+
+socket.on("role", (text) => {
+  roleText.textContent = text;
+});
+
+socket.on("leader", () => {
+  isLeader = true;
+  leaderPanel.style.display = "block";
 });
 
 socket.on("players", (players) => {
-    const list = document.getElementById("players")
-    list.innerHTML = ""
+  playersList.innerHTML = "";
 
-    players.forEach(p => {
-        const li = document.createElement("li")
-        li.textContent = `${p.name} (${p.score})`
-        list.appendChild(li)
-    })
-})
+  players.forEach((player) => {
+    const li = document.createElement("li");
+    li.textContent = player.name;
+    playersList.appendChild(li);
+  });
+});
 
-socket.on("leader", (id) => {
-    leaderId = id
-    const isLeader = myId === id
+socket.on("roundStarted", (data) => {
+  if (data.image) {
+    photo.src = data.image;
+    photo.style.display = "block";
+    hiddenText.style.display = "none";
+  } else {
+    photo.style.display = "none";
+    hiddenText.style.display = "block";
+  }
 
-    document.getElementById("role").innerText =
-        isLeader ? "Ты ведущий" : "Ты игрок"
+  logList.innerHTML = "";
+  questionInput.value = "";
+  guessInput.value = "";
+});
 
-    document.getElementById("leaderPanel").style.display =
-        isLeader ? "block" : "none"
-})
-
-document.getElementById("imageUpload").addEventListener("change", e => {
-    const file = e.target.files[0]
-    const reader = new FileReader()
-    reader.onload = () => selectedImage = reader.result
-    reader.readAsDataURL(file)
-})
+socket.on("log", (text) => {
+  const li = document.createElement("li");
+  li.textContent = text;
+  logList.appendChild(li);
+});
 
 function startRound() {
-    const answer = document.getElementById("correctAnswer").value
+  if (!isLeader) return;
 
-    socket.emit("setRound", {
-        answer,
-        image: selectedImage
-    })
+  const answer = correctAnswerInput.value.trim();
+  if (!answer) return alert("Введите ответ");
+
+  const file = imageUpload.files[0];
+
+  if (!file) {
+    socket.emit("startRound", { answer, image: "" });
+    correctAnswerInput.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    socket.emit("startRound", {
+      answer,
+      image: event.target.result,
+    });
+  };
+
+  reader.readAsDataURL(file);
+
+  correctAnswerInput.value = "";
 }
-
-socket.on("hideImage", () => {
-    document.getElementById("photo").style.display = "none"
-    document.getElementById("hiddenText").style.display = "block"
-})
-
-socket.on("image", (img) => {
-    const photo = document.getElementById("photo")
-    photo.src = img
-    photo.style.display = "block"
-    document.getElementById("hiddenText").style.display = "none"
-})
 
 function sendQuestion() {
-    const q = document.getElementById("question").value
-    socket.emit("question", q)
+  const text = questionInput.value.trim();
+  if (!text) return;
+
+  socket.emit("question", `${myName}: ${text}`);
+  questionInput.value = "";
 }
 
-function sendAnswer(a) {
-    socket.emit("answer", a)
+function sendAnswer(answer) {
+  if (!answer) return;
+  socket.emit("answer", answer);
 }
 
 function sendGuess() {
-    const g = document.getElementById("guess").value
-    socket.emit("guess", g)
-}
+  const guess = guessInput.value.trim();
+  if (!guess) return;
 
-socket.on("question", q => log("❓ " + q))
-socket.on("answer", a => log("👉 " + a))
-socket.on("guess", g => log("💡 " + g))
-socket.on("logMessage", m => log(m))
-
-function log(t) {
-    const li = document.createElement("li")
-    li.textContent = t
-    document.getElementById("log").appendChild(li)
+  socket.emit("guess", guess);
+  guessInput.value = "";
 }
