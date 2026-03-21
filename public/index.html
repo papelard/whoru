@@ -1,20 +1,151 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>TEST</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhoRu</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .wrap {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      width: 220px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    #game {
+      display: none;
+      margin-top: 30px;
+    }
+
+    #players {
+      margin-top: 20px;
+      text-align: left;
+      display: inline-block;
+      min-width: 240px;
+    }
+
+    .player {
+      background: #111;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    #status {
+      margin-top: 15px;
+      color: #00ff88;
+    }
+
+    #error {
+      margin-top: 15px;
+      color: #ff4d4d;
+    }
+  </style>
 </head>
-<body style="
-  margin:0;
-  background:black;
-  color:red;
-  font-size:50px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  font-family:Arial;
-">
-  НОВЫЙ КОД РАБОТАЕТ 🚀
+<body>
+  <div class="wrap">
+    <h1>WhoRu</h1>
+
+    <div id="login">
+      <input id="nickname" type="text" placeholder="Введите ник" />
+      <button id="joinBtn">Войти</button>
+      <div id="error"></div>
+      <div id="status"></div>
+    </div>
+
+    <div id="game">
+      <h2>Ты вошёл в игру</h2>
+      <div id="players"></div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const nicknameInput = document.getElementById("nickname");
+    const joinBtn = document.getElementById("joinBtn");
+    const login = document.getElementById("login");
+    const game = document.getElementById("game");
+    const players = document.getElementById("players");
+    const error = document.getElementById("error");
+    const status = document.getElementById("status");
+
+    joinBtn.addEventListener("click", () => {
+      const nickname = nicknameInput.value.trim();
+      error.textContent = "";
+      status.textContent = "";
+
+      if (!nickname) {
+        error.textContent = "Введите ник";
+        return;
+      }
+
+      socket.emit("joinGame", nickname);
+    });
+
+    nicknameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        joinBtn.click();
+      }
+    });
+
+    socket.on("connect", () => {
+      status.textContent = "Подключено к серверу";
+    });
+
+    socket.on("connect_error", () => {
+      error.textContent = "Нет подключения к серверу";
+    });
+
+    socket.on("joinError", (msg) => {
+      error.textContent = msg;
+    });
+
+    socket.on("joined", (data) => {
+      login.style.display = "none";
+      game.style.display = "block";
+      status.textContent = "";
+    });
+
+    socket.on("playersUpdated", (list) => {
+      players.innerHTML = "";
+
+      list.forEach((player) => {
+        const div = document.createElement("div");
+        div.className = "player";
+        div.textContent = player.name;
+        players.appendChild(div);
+      });
+    });
+  </script>
 </body>
 </html>
