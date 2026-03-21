@@ -18,7 +18,7 @@
     }
 
     .container {
-      max-width: 920px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 24px 16px 40px;
     }
@@ -61,20 +61,15 @@
       font-weight: bold;
     }
 
-    .join-row,
-    .answer-row,
-    .host-row,
-    .yn-row {
+    .row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .join-row input,
-    .answer-row input,
-    .host-row select {
+    .row > * {
       flex: 1;
-      min-width: 180px;
+      min-width: 160px;
     }
 
     .top-grid {
@@ -83,7 +78,7 @@
       gap: 16px;
     }
 
-    @media (min-width: 860px) {
+    @media (min-width: 960px) {
       .top-grid {
         grid-template-columns: 1.2fr 0.8fr;
       }
@@ -138,29 +133,68 @@
     #hostAnswerBox {
       background: rgba(245, 158, 11, 0.15);
     }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      flex: 1;
+    }
+
+    .room-code {
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>WhoRu</h1>
 
-    <div id="joinCard" class="card">
-      <h2>Вход</h2>
-      <div class="join-row">
-        <input id="nicknameInput" type="text" placeholder="Введите ник" />
-        <button id="joinBtn">Войти</button>
+    <div id="lobbyCard" class="card">
+      <div class="tabs">
+        <button id="showCreateBtn" class="tab-btn">Создать комнату</button>
+        <button id="showJoinBtn" class="tab-btn">Войти в комнату</button>
       </div>
+
+      <div id="createBox">
+        <div class="row">
+          <input id="createNicknameInput" type="text" placeholder="Ваш ник" />
+          <input id="createPasswordInput" type="text" placeholder="Пароль комнаты" />
+          <button id="createRoomBtn">Создать</button>
+        </div>
+      </div>
+
+      <div id="joinBox" class="hidden">
+        <div class="row">
+          <input id="joinNicknameInput" type="text" placeholder="Ваш ник" />
+          <input id="joinRoomCodeInput" type="text" placeholder="Код комнаты" />
+          <input id="joinPasswordInput" type="text" placeholder="Пароль комнаты" />
+          <button id="joinRoomBtn">Войти</button>
+        </div>
+      </div>
+
       <div id="joinError" class="msg hidden"></div>
     </div>
 
     <div id="gameUI" class="hidden">
+      <div class="card">
+        <div>Комната:</div>
+        <div id="roomCodeBox" class="room-code">—</div>
+      </div>
+
       <div class="top-grid">
         <div>
           <div class="card">
             <h2>Управление</h2>
 
             <div id="hostControls" class="hidden">
-              <div class="host-row">
+              <div class="row">
                 <select id="categorySelect">
                   <option value="">Все категории</option>
                   <option value="football">Футбол</option>
@@ -171,12 +205,12 @@
               </div>
             </div>
 
-            <div class="yn-row" style="margin-top: 12px;">
+            <div class="row" style="margin-top: 12px;">
               <button id="yesBtn">Да</button>
               <button id="noBtn">Нет</button>
             </div>
 
-            <div class="answer-row" style="margin-top: 12px;">
+            <div class="row" style="margin-top: 12px;">
               <input id="answerInput" type="text" placeholder="Кто это?" />
               <button id="answerBtn">Ответ</button>
             </div>
@@ -188,6 +222,7 @@
           <div class="card center">
             <h2>Персонаж</h2>
             <img id="personImage" alt="character" />
+            <div id="imageHiddenText" class="msg">Игрокам картинка скрыта</div>
             <div id="categoryBox" class="msg">Категория: —</div>
           </div>
         </div>
@@ -211,12 +246,26 @@
   <script>
     const socket = io();
 
-    const joinCard = document.getElementById("joinCard");
+    const lobbyCard = document.getElementById("lobbyCard");
     const gameUI = document.getElementById("gameUI");
-    const nicknameInput = document.getElementById("nicknameInput");
-    const joinBtn = document.getElementById("joinBtn");
+
+    const showCreateBtn = document.getElementById("showCreateBtn");
+    const showJoinBtn = document.getElementById("showJoinBtn");
+    const createBox = document.getElementById("createBox");
+    const joinBox = document.getElementById("joinBox");
+
+    const createNicknameInput = document.getElementById("createNicknameInput");
+    const createPasswordInput = document.getElementById("createPasswordInput");
+    const createRoomBtn = document.getElementById("createRoomBtn");
+
+    const joinNicknameInput = document.getElementById("joinNicknameInput");
+    const joinRoomCodeInput = document.getElementById("joinRoomCodeInput");
+    const joinPasswordInput = document.getElementById("joinPasswordInput");
+    const joinRoomBtn = document.getElementById("joinRoomBtn");
+
     const joinError = document.getElementById("joinError");
 
+    const roomCodeBox = document.getElementById("roomCodeBox");
     const hostControls = document.getElementById("hostControls");
     const categorySelect = document.getElementById("categorySelect");
     const startRoundBtn = document.getElementById("startRoundBtn");
@@ -227,6 +276,7 @@
     const answerBtn = document.getElementById("answerBtn");
 
     const personImage = document.getElementById("personImage");
+    const imageHiddenText = document.getElementById("imageHiddenText");
     const categoryBox = document.getElementById("categoryBox");
     const turnBox = document.getElementById("turnBox");
     const hostAnswerBox = document.getElementById("hostAnswerBox");
@@ -234,12 +284,17 @@
     const messages = document.getElementById("messages");
 
     let isHost = false;
+    let roomCode = "";
 
     function addMessage(text) {
       const div = document.createElement("div");
       div.className = "msg";
       div.textContent = text;
       messages.prepend(div);
+
+      while (messages.children.length > 8) {
+        messages.removeChild(messages.lastChild);
+      }
     }
 
     function showJoinError(text) {
@@ -252,15 +307,56 @@
       joinError.classList.add("hidden");
     }
 
-    joinBtn.addEventListener("click", () => {
+    function showCreateTab() {
+      createBox.classList.remove("hidden");
+      joinBox.classList.add("hidden");
       clearJoinError();
-      socket.emit("joinGame", nicknameInput.value.trim());
+    }
+
+    function showJoinTab() {
+      createBox.classList.add("hidden");
+      joinBox.classList.remove("hidden");
+      clearJoinError();
+    }
+
+    showCreateBtn.addEventListener("click", showCreateTab);
+    showJoinBtn.addEventListener("click", showJoinTab);
+
+    createRoomBtn.addEventListener("click", () => {
+      clearJoinError();
+      socket.emit("createRoom", {
+        nickname: createNicknameInput.value.trim(),
+        password: createPasswordInput.value.trim()
+      });
     });
 
-    nicknameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        joinBtn.click();
-      }
+    joinRoomBtn.addEventListener("click", () => {
+      clearJoinError();
+      socket.emit("joinRoom", {
+        nickname: joinNicknameInput.value.trim(),
+        roomCode: joinRoomCodeInput.value.trim(),
+        password: joinPasswordInput.value.trim()
+      });
+    });
+
+    createNicknameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") createRoomBtn.click();
+    });
+
+    createPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") createRoomBtn.click();
+    });
+
+    joinNicknameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") joinRoomBtn.click();
+    });
+
+    joinRoomCodeInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") joinRoomBtn.click();
+    });
+
+    joinPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") joinRoomBtn.click();
     });
 
     startRoundBtn.addEventListener("click", () => {
@@ -290,14 +386,19 @@
 
     socket.on("joined", (data) => {
       isHost = data.isHost;
+      roomCode = data.roomCode || "";
 
-      joinCard.classList.add("hidden");
+      lobbyCard.classList.add("hidden");
       gameUI.classList.remove("hidden");
+      roomCodeBox.textContent = roomCode || "—";
 
       if (isHost) {
         hostControls.classList.remove("hidden");
+        imageHiddenText.classList.add("hidden");
         addMessage("Ты ведущий");
       } else {
+        hostControls.classList.add("hidden");
+        imageHiddenText.classList.remove("hidden");
         addMessage("Ты игрок");
       }
     });
@@ -305,6 +406,7 @@
     socket.on("becameHost", () => {
       isHost = true;
       hostControls.classList.remove("hidden");
+      imageHiddenText.classList.add("hidden");
       addMessage("Теперь ты ведущий");
     });
 
@@ -331,6 +433,21 @@
     });
 
     socket.on("roundStarted", (data) => {
+      categoryBox.textContent = "Категория: " + (data.category || "—");
+      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
+      addMessage("Раунд начался");
+
+      if (!isHost) {
+        personImage.src = "";
+        personImage.style.display = "none";
+        imageHiddenText.classList.remove("hidden");
+        hostAnswerBox.classList.add("hidden");
+      }
+    });
+
+    socket.on("hostRoundData", (data) => {
+      if (!isHost) return;
+
       if (data.image) {
         personImage.src = data.image;
         personImage.style.display = "block";
@@ -338,19 +455,23 @@
         personImage.style.display = "none";
       }
 
-      categoryBox.textContent = "Категория: " + (data.category || "—");
-      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      addMessage("Раунд начался");
+      imageHiddenText.classList.add("hidden");
+      hostAnswerBox.classList.remove("hidden");
+      hostAnswerBox.textContent =
+        `Ответ для ведущего: ${data.name} (${data.category})`;
+    });
+
+    socket.on("playerRoundData", () => {
+      if (isHost) return;
+      personImage.src = "";
+      personImage.style.display = "none";
+      imageHiddenText.classList.remove("hidden");
+      hostAnswerBox.classList.add("hidden");
     });
 
     socket.on("turnChanged", (data) => {
       turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
       addMessage("Ход: " + (data.turnPlayerName || "—"));
-    });
-
-    socket.on("hostAnswer", (data) => {
-      hostAnswerBox.classList.remove("hidden");
-      hostAnswerBox.textContent = `Ответ для ведущего: ${data.name} (${data.category})`;
     });
 
     socket.on("roundWinner", (data) => {
