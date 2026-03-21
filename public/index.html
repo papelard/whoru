@@ -1,95 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>WhoRu</title>
-<style>
-body { font-family: Arial; background:#111; color:white; text-align:center; }
-input,button,select { padding:10px; margin:5px; border-radius:8px; border:none; }
-img { max-width:300px; border-radius:12px; margin-top:10px; }
-.turn { color:lime; }
-.host { color:orange; }
-</style>
+  <meta charset="UTF-8">
+  <title>TEST</title>
 </head>
-<body>
-
-<h1>WhoRu</h1>
-
-<div id="login">
-<input id="name" placeholder="ник">
-<button onclick="join()">Войти</button>
-</div>
-
-<div id="game" style="display:none;">
-<select id="cat">
-<option value="">Все</option>
-<option value="football">Футбол</option>
-<option value="actors">Актеры</option>
-<option value="music">Музыка</option>
-<option value="cartoons">Мультики</option>
-</select>
-
-<button onclick="start()">Старт</button>
-
-<div>
-<button onclick="yes()">Да</button>
-<button onclick="no()">Нет</button>
-</div>
-
-<input id="answer" placeholder="ответ">
-<button onclick="send()">Ответить</button>
-
-<h3 id="players"></h3>
-<img id="img">
-<h3 id="info"></h3>
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const s = io();
-let me, host=false;
-
-function join(){
-  s.emit("join", name.value);
-}
-
-function start(){
-  if(host) s.emit("start", cat.value);
-}
-
-function yes(){ s.emit("yesno","yes"); }
-function no(){ s.emit("yesno","no"); }
-
-function send(){
-  s.emit("answer", answer.value);
-  answer.value="";
-}
-
-s.on("me", d=>{
-  me=d.id; host=d.host;
-  login.style.display="none";
-  game.style.display="block";
-});
-
-s.on("players", p=>{
-  players.innerHTML = p.map(x=>
-    `${x.name} (${x.score}) ${x.isTurn?"🎯":""} ${x.isHost?"👑":""}`
-  ).join("<br>");
-});
-
-s.on("round", d=>{
-  img.src=d.image;
-  info.innerText="Категория: "+d.category;
-});
-
-s.on("winner", d=>{
-  alert(d.name+" угадал! Это "+d.correct);
-});
-
-s.on("answer", d=>{
-  if(host) console.log("Ответ:", d.name);
-});
-</script>
-
+<body style="
+  margin:0;
+  background:black;
+  color:red;
+  font-size:50px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+">
+  НОВЫЙ КОД РАБОТАЕТ 🚀
 </body>
 </html>
