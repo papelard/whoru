@@ -28,7 +28,7 @@
       font-size: 44px;
     }
 
-    h2, h3 {
+    h2 {
       margin-top: 0;
     }
 
@@ -59,10 +59,6 @@
       color: white;
       cursor: pointer;
       font-weight: bold;
-    }
-
-    button:hover {
-      opacity: 0.92;
     }
 
     .join-row,
@@ -237,7 +233,6 @@
     const playersList = document.getElementById("playersList");
     const messages = document.getElementById("messages");
 
-    let myId = null;
     let isHost = false;
 
     function addMessage(text) {
@@ -294,7 +289,6 @@
     });
 
     socket.on("joined", (data) => {
-      myId = data.id;
       isHost = data.isHost;
 
       joinCard.classList.add("hidden");
@@ -351,13 +345,12 @@
 
     socket.on("turnChanged", (data) => {
       turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      addMessage("Ход перешёл: " + (data.turnPlayerName || "—"));
+      addMessage("Ход: " + (data.turnPlayerName || "—"));
     });
 
     socket.on("hostAnswer", (data) => {
       hostAnswerBox.classList.remove("hidden");
-      hostAnswerBox.textContent =
-        `Ответ для ведущего: ${data.name} (${data.category})`;
+      hostAnswerBox.textContent = `Ответ для ведущего: ${data.name} (${data.category})`;
     });
 
     socket.on("roundWinner", (data) => {

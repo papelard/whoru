@@ -158,7 +158,7 @@ io.on("connection", (socket) => {
     }
 
     if (result === "yes") {
-      socket.emit("systemMessage", "Ответ: да. Можешь спрашивать дальше");
+      socket.emit("systemMessage", "Ответ: да");
       return;
     }
 
