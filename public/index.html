@@ -1,91 +1,95 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhoRu</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>WhoRu</title>
+<style>
+body { font-family: Arial; background:#111; color:white; text-align:center; }
+input,button,select { padding:10px; margin:5px; border-radius:8px; border:none; }
+img { max-width:300px; border-radius:12px; margin-top:10px; }
+.turn { color:lime; }
+.host { color:orange; }
+</style>
 </head>
 <body>
 
-  <div class="app">
-    <div class="card">
+<h1>WhoRu</h1>
 
-      <div id="joinScreen" class="screen">
-        <div class="logo">WhoRu</div>
-        <p class="subtitle">Комнаты 1–10 с паролем</p>
+<div id="login">
+<input id="name" placeholder="ник">
+<button onclick="join()">Войти</button>
+</div>
 
-        <form id="joinForm" class="stack">
-          <input id="name" placeholder="Имя" autocomplete="off">
-          <input id="roomCode" placeholder="Комната (1-10)" autocomplete="off">
-          <input id="roomPassword" placeholder="Пароль комнаты" autocomplete="off">
-          <button type="submit">Войти</button>
-        </form>
+<div id="game" style="display:none;">
+<select id="cat">
+<option value="">Все</option>
+<option value="football">Футбол</option>
+<option value="actors">Актеры</option>
+<option value="music">Музыка</option>
+<option value="cartoons">Мультики</option>
+</select>
 
-        <p id="joinError" class="error-text"></p>
-      </div>
+<button onclick="start()">Старт</button>
 
-      <div id="game" class="screen" style="display:none;">
-        <div class="topbar">
-          <h2 id="role">Игра</h2>
-          <p id="roomLabel" class="muted"></p>
-        </div>
+<div>
+<button onclick="yes()">Да</button>
+<button onclick="no()">Нет</button>
+</div>
 
-        <ul id="players" class="players"></ul>
+<input id="answer" placeholder="ответ">
+<button onclick="send()">Ответить</button>
 
-        <div class="panel stack">
-          <h3 class="section-title">🏆 Счёт</h3>
-          <ul id="scoreboard" class="scoreboard"></ul>
-        </div>
+<h3 id="players"></h3>
+<img id="img">
+<h3 id="info"></h3>
+</div>
 
-        <div id="leaderPanel" class="panel stack" style="display:none;">
-          <h3 class="section-title">Панель ведущего</h3>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const s = io();
+let me, host=false;
 
-          <select id="packSelect"></select>
-          <button type="button" onclick="randomFromPack()">🎲 Рандом из пака</button>
+function join(){
+  s.emit("join", name.value);
+}
 
-          <input id="correctAnswer" placeholder="Правильный ответ">
-          <input type="file" id="imageUpload" accept="image/*">
-          <button onclick="startRound()">Старт раунда</button>
-        </div>
+function start(){
+  if(host) s.emit("start", cat.value);
+}
 
-        <div class="photo-box">
-          <img id="photo" style="display:none;" alt="Фото">
-          <p id="hiddenText" class="muted">Фото скрыто</p>
-        </div>
+function yes(){ s.emit("yesno","yes"); }
+function no(){ s.emit("yesno","no"); }
 
-        <div class="panel stack">
-          <h3 class="section-title">Вопрос</h3>
-          <input id="question" placeholder="Напиши вопрос">
-          <button onclick="sendQuestion()">Спросить</button>
-        </div>
+function send(){
+  s.emit("answer", answer.value);
+  answer.value="";
+}
 
-        <div id="answerButtons" class="panel stack">
-          <h3 class="section-title">Ответ</h3>
-          <div class="row">
-            <button class="half" onclick="sendAnswer('Да')">Да</button>
-            <button class="half" onclick="sendAnswer('Нет')">Нет</button>
-          </div>
-        </div>
+s.on("me", d=>{
+  me=d.id; host=d.host;
+  login.style.display="none";
+  game.style.display="block";
+});
 
-        <div id="guessBlock" class="panel stack">
-          <h3 class="section-title">Угадать</h3>
-          <input id="guess" placeholder="Твой ответ">
-          <button onclick="sendGuess()">Угадать</button>
-        </div>
+s.on("players", p=>{
+  players.innerHTML = p.map(x=>
+    `${x.name} (${x.score}) ${x.isTurn?"🎯":""} ${x.isHost?"👑":""}`
+  ).join("<br>");
+});
 
-        <div class="panel stack">
-          <h3 class="section-title">Чат</h3>
-          <ul id="log" class="log"></ul>
-        </div>
-      </div>
+s.on("round", d=>{
+  img.src=d.image;
+  info.innerText="Категория: "+d.category;
+});
 
-    </div>
-  </div>
+s.on("winner", d=>{
+  alert(d.name+" угадал! Это "+d.correct);
+});
 
-  <div class="signature">Made by Papeland</div>
+s.on("answer", d=>{
+  if(host) console.log("Ответ:", d.name);
+});
+</script>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>
