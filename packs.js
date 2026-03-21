@@ -1,38 +1,65 @@
 const packs = {
   celebrities: [
-    // ⚽ футбол
-    { name: "Lionel Messi", category: "football", image: "https://source.unsplash.com/400x400/?messi" },
-    { name: "Cristiano Ronaldo", category: "football", image: "https://source.unsplash.com/400x400/?ronaldo" },
-    { name: "Neymar", category: "football", image: "https://source.unsplash.com/400x400/?neymar" },
-
-    // 🎬 актеры
-    { name: "Leonardo DiCaprio", category: "actors", image: "https://source.unsplash.com/400x400/?dicaprio" },
-    { name: "Brad Pitt", category: "actors", image: "https://source.unsplash.com/400x400/?brad,pitt" },
-    { name: "Johnny Depp", category: "actors", image: "https://source.unsplash.com/400x400/?johnny,depp" },
-
-    // 🎤 музыка
-    { name: "Drake", category: "music", image: "https://source.unsplash.com/400x400/?drake" },
-    { name: "Eminem", category: "music", image: "https://source.unsplash.com/400x400/?eminem" },
-    { name: "Taylor Swift", category: "music", image: "https://source.unsplash.com/400x400/?taylor,swift" },
-
-    // 🎭 известные
-    { name: "Elon Musk", category: "famous", image: "https://source.unsplash.com/400x400/?elon,musk" },
-    { name: "Steve Jobs", category: "famous", image: "https://source.unsplash.com/400x400/?steve,jobs" },
-
-    // 🧸 мультики
-    { name: "Mickey Mouse", category: "cartoons", image: "https://source.unsplash.com/400x400/?mickey,mouse" },
-    { name: "SpongeBob", category: "cartoons", image: "https://source.unsplash.com/400x400/?spongebob" },
-    { name: "Shrek", category: "cartoons", image: "https://source.unsplash.com/400x400/?shrek" },
-    { name: "Tom Cat", category: "cartoons", image: "https://source.unsplash.com/400x400/?tom,cat" },
-    { name: "Jerry Mouse", category: "cartoons", image: "https://source.unsplash.com/400x400/?jerry,mouse" },
-
-    // 🇷🇺 советские
-    { name: "Cheburashka", category: "cartoons", image: "https://source.unsplash.com/400x400/?cheburashka" },
-    { name: "Gena Crocodile", category: "cartoons", image: "https://source.unsplash.com/400x400/?crocodile,cartoon" },
-
-    // 🇯🇵 аниме
-    { name: "Naruto", category: "cartoons", image: "https://source.unsplash.com/400x400/?naruto" },
-    { name: "Goku", category: "cartoons", image: "https://source.unsplash.com/400x400/?goku" }
+    {
+      name: "Lionel Messi",
+      category: "football",
+      image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Lionel_Messi.jpg"
+    },
+    {
+      name: "Cristiano Ronaldo",
+      category: "football",
+      image: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"
+    },
+    {
+      name: "Neymar",
+      category: "football",
+      image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Neymar_2018.jpg"
+    },
+    {
+      name: "Kylian Mbappe",
+      category: "football",
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Kylian_Mbapp%C3%A9_2019.jpg"
+    },
+    {
+      name: "Taylor Swift",
+      category: "music",
+      image: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Taylor_Swift_2019_by_Glenn_Francis.jpg"
+    },
+    {
+      name: "Drake",
+      category: "music",
+      image: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Drake_July_2016.jpg"
+    },
+    {
+      name: "Ariana Grande",
+      category: "music",
+      image: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Ariana_Grande_2017.jpg"
+    },
+    {
+      name: "The Weeknd",
+      category: "music",
+      image: "https://upload.wikimedia.org/wikipedia/commons/9/95/The_Weeknd_Cannes_2023.jpg"
+    },
+    {
+      name: "Leonardo DiCaprio",
+      category: "actors",
+      image: "https://upload.wikimedia.org/wikipedia/commons/4/46/Leonardo_DiCaprio_Cannes_2019.jpg"
+    },
+    {
+      name: "Brad Pitt",
+      category: "actors",
+      image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Brad_Pitt_2019_by_Glenn_Francis.jpg"
+    },
+    {
+      name: "Dwayne Johnson",
+      category: "actors",
+      image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Dwayne_Johnson_2014.jpg"
+    },
+    {
+      name: "Jennifer Lawrence",
+      category: "actors",
+      image: "https://upload.wikimedia.org/wikipedia/commons/5/50/Jennifer_Lawrence_SDCC_2015_X-Men.jpg"
+    }
   ]
 };
 

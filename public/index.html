@@ -1,155 +1,376 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WhoRu</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhoRu</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:white;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #081633;
+      color: white;
+      min-height: 100vh;
+    }
 
-.wrap {
-  max-width:800px;
-  margin:auto;
-  padding:20px;
-}
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
 
-input, button, select {
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
-}
+    h1 {
+      margin: 0 0 20px;
+      font-size: 44px;
+    }
 
-button {
-  background:#3b82f6;
-  color:white;
-}
+    h2, h3 {
+      margin-top: 0;
+    }
 
-#game { display:none; }
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
 
-.player {
-  background:#1e293b;
-  padding:10px;
-  margin:5px 0;
-  border-radius:10px;
-}
+    .hidden {
+      display: none;
+    }
 
-.turn {
-  border:2px solid lime;
-}
+    input, select, button {
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      padding: 12px;
+    }
 
-.host {
-  border:2px solid orange;
-}
+    input, select {
+      width: 100%;
+    }
 
-img {
-  width:100%;
-  max-width:300px;
-  border-radius:15px;
-}
-</style>
+    button {
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .join-row,
+    .answer-row,
+    .host-row,
+    .yn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .join-row input,
+    .answer-row input,
+    .host-row select {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 860px) {
+      .top-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    #personImage {
+      width: 100%;
+      max-width: 360px;
+      display: none;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      margin: 0 auto;
+    }
+
+    .players-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .players-list li {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .turn {
+      border: 2px solid #22c55e;
+    }
+
+    .host {
+      border: 2px solid #f59e0b;
+    }
+
+    .msg {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      word-break: break-word;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    #turnBox {
+      font-weight: bold;
+    }
+
+    #hostAnswerBox {
+      background: rgba(245, 158, 11, 0.15);
+    }
+  </style>
 </head>
-
 <body>
-<div class="wrap">
+  <div class="container">
+    <h1>WhoRu</h1>
 
-<h1>WhoRu</h1>
+    <div id="joinCard" class="card">
+      <h2>Вход</h2>
+      <div class="join-row">
+        <input id="nicknameInput" type="text" placeholder="Введите ник" />
+        <button id="joinBtn">Войти</button>
+      </div>
+      <div id="joinError" class="msg hidden"></div>
+    </div>
 
-<div id="login">
-<input id="name" placeholder="ник">
-<button onclick="join()">Войти</button>
-</div>
+    <div id="gameUI" class="hidden">
+      <div class="top-grid">
+        <div>
+          <div class="card">
+            <h2>Управление</h2>
 
-<div id="game">
+            <div id="hostControls" class="hidden">
+              <div class="host-row">
+                <select id="categorySelect">
+                  <option value="">Все категории</option>
+                  <option value="football">Футбол</option>
+                  <option value="music">Музыка</option>
+                  <option value="actors">Актёры</option>
+                </select>
+                <button id="startRoundBtn">Старт</button>
+              </div>
+            </div>
 
-<select id="category">
-<option value="">Все</option>
-<option value="football">Футбол</option>
-<option value="music">Музыка</option>
-<option value="actors">Актёры</option>
-</select>
+            <div class="yn-row" style="margin-top: 12px;">
+              <button id="yesBtn">Да</button>
+              <button id="noBtn">Нет</button>
+            </div>
 
-<button onclick="start()">Старт</button>
+            <div class="answer-row" style="margin-top: 12px;">
+              <input id="answerInput" type="text" placeholder="Кто это?" />
+              <button id="answerBtn">Ответ</button>
+            </div>
 
-<div>
-<img id="img">
-</div>
+            <div id="turnBox" class="msg">Ход: —</div>
+            <div id="hostAnswerBox" class="msg hidden"></div>
+          </div>
 
-<input id="answer" placeholder="кто это?">
-<button onclick="sendAnswer()">Ответ</button>
+          <div class="card center">
+            <h2>Персонаж</h2>
+            <img id="personImage" alt="character" />
+            <div id="categoryBox" class="msg">Категория: —</div>
+          </div>
+        </div>
 
-<div id="players"></div>
+        <div>
+          <div class="card">
+            <h2>Игроки</h2>
+            <ul id="playersList" class="players-list"></ul>
+          </div>
 
-<div id="log"></div>
+          <div class="card">
+            <h2>События</h2>
+            <div id="messages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
 
-</div>
+    const joinCard = document.getElementById("joinCard");
+    const gameUI = document.getElementById("gameUI");
+    const nicknameInput = document.getElementById("nicknameInput");
+    const joinBtn = document.getElementById("joinBtn");
+    const joinError = document.getElementById("joinError");
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
+    const hostControls = document.getElementById("hostControls");
+    const categorySelect = document.getElementById("categorySelect");
+    const startRoundBtn = document.getElementById("startRoundBtn");
 
-let myId;
-let isHost = false;
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const answerInput = document.getElementById("answerInput");
+    const answerBtn = document.getElementById("answerBtn");
 
-function join() {
-  socket.emit("joinGame", document.getElementById("name").value);
-}
+    const personImage = document.getElementById("personImage");
+    const categoryBox = document.getElementById("categoryBox");
+    const turnBox = document.getElementById("turnBox");
+    const hostAnswerBox = document.getElementById("hostAnswerBox");
+    const playersList = document.getElementById("playersList");
+    const messages = document.getElementById("messages");
 
-function start() {
-  socket.emit("startRound", document.getElementById("category").value);
-}
+    let myId = null;
+    let isHost = false;
 
-function sendAnswer() {
-  socket.emit("answer", document.getElementById("answer").value);
-}
+    function addMessage(text) {
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.textContent = text;
+      messages.prepend(div);
+    }
 
-socket.on("joined", (data) => {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("game").style.display = "block";
-  isHost = data.isHost;
-});
+    function showJoinError(text) {
+      joinError.textContent = text;
+      joinError.classList.remove("hidden");
+    }
 
-socket.on("players", (list) => {
-  const el = document.getElementById("players");
-  el.innerHTML = "";
+    function clearJoinError() {
+      joinError.textContent = "";
+      joinError.classList.add("hidden");
+    }
 
-  list.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "player";
-    div.textContent = p.name + " (" + p.score + ")";
-    el.appendChild(div);
-  });
-});
+    joinBtn.addEventListener("click", () => {
+      clearJoinError();
+      socket.emit("joinGame", nicknameInput.value.trim());
+    });
 
-socket.on("round", (data) => {
-  document.getElementById("img").src = data.image;
-});
+    nicknameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        joinBtn.click();
+      }
+    });
 
-socket.on("turn", (id) => {
-  log("Ход другого игрока");
-});
+    startRoundBtn.addEventListener("click", () => {
+      socket.emit("startRound", categorySelect.value);
+    });
 
-socket.on("win", (data) => {
-  log("Победил " + data.name + " | " + data.answer);
-});
+    yesBtn.addEventListener("click", () => {
+      socket.emit("questionResult", "yes");
+    });
 
-socket.on("answer", (name) => {
-  log("Ответ: " + name);
-});
+    noBtn.addEventListener("click", () => {
+      socket.emit("questionResult", "no");
+    });
 
-function log(text) {
-  const el = document.getElementById("log");
-  el.innerHTML = "<div>" + text + "</div>" + el.innerHTML;
-}
-</script>
+    answerBtn.addEventListener("click", () => {
+      const answer = answerInput.value.trim();
+      if (!answer) return;
+      socket.emit("submitAnswer", answer);
+      answerInput.value = "";
+    });
 
+    answerInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        answerBtn.click();
+      }
+    });
+
+    socket.on("joined", (data) => {
+      myId = data.id;
+      isHost = data.isHost;
+
+      joinCard.classList.add("hidden");
+      gameUI.classList.remove("hidden");
+
+      if (isHost) {
+        hostControls.classList.remove("hidden");
+        addMessage("Ты ведущий");
+      } else {
+        addMessage("Ты игрок");
+      }
+    });
+
+    socket.on("becameHost", () => {
+      isHost = true;
+      hostControls.classList.remove("hidden");
+      addMessage("Теперь ты ведущий");
+    });
+
+    socket.on("joinError", (text) => {
+      showJoinError(text);
+    });
+
+    socket.on("playersUpdated", (players) => {
+      playersList.innerHTML = "";
+
+      players.forEach((player) => {
+        const li = document.createElement("li");
+
+        if (player.isTurn) li.classList.add("turn");
+        if (player.isHost) li.classList.add("host");
+
+        li.textContent =
+          `${player.name} — ${player.score} очк.` +
+          (player.isHost ? " 👑" : "") +
+          (player.isTurn ? " 🎯 ход" : "");
+
+        playersList.appendChild(li);
+      });
+    });
+
+    socket.on("roundStarted", (data) => {
+      if (data.image) {
+        personImage.src = data.image;
+        personImage.style.display = "block";
+      } else {
+        personImage.style.display = "none";
+      }
+
+      categoryBox.textContent = "Категория: " + (data.category || "—");
+      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
+      addMessage("Раунд начался");
+    });
+
+    socket.on("turnChanged", (data) => {
+      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
+      addMessage("Ход перешёл: " + (data.turnPlayerName || "—"));
+    });
+
+    socket.on("hostAnswer", (data) => {
+      hostAnswerBox.classList.remove("hidden");
+      hostAnswerBox.textContent =
+        `Ответ для ведущего: ${data.name} (${data.category})`;
+    });
+
+    socket.on("roundWinner", (data) => {
+      addMessage(`Победитель: ${data.winnerName}. Ответ: ${data.correctName}`);
+    });
+
+    socket.on("answerWrong", () => {
+      addMessage("Неправильно");
+    });
+
+    socket.on("systemMessage", (text) => {
+      addMessage(text);
+    });
+  </script>
 </body>
 </html>
