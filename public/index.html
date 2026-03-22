@@ -41,14 +41,7 @@
       line-height: 1;
       margin-bottom: 24px;
     }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(10px);
-    }
+    .card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; backdrop-filter: blur(10px); }
     h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
     .hidden { display: none !important; }
     input, select, button { border: none; border-radius: var(--radius-sm); font-size: 15px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-weight: 600; }
@@ -180,7 +173,7 @@
             </div>
             <div class="timer-wrap" id="timerWrap" style="display:none;">
               <div class="timer-bar-bg"><div class="timer-bar" id="timerBar"></div></div>
-              <div class="timer-text">⏱ <span id="timerText">30</span> сек</div>
+              <div class="timer-text">⏱ <span id="timerText">60</span> сек</div>
             </div>
             <div class="action-row" style="margin-top:14px;">
               <button id="yesBtn" class="green">✅ Да</button>
@@ -272,7 +265,7 @@
 
     let isHost = false;
     let roomCode = "";
-    let timerDuration = 30;
+    let timerDuration = 60;
 
     const canvas = document.getElementById("confettiCanvas");
     const ctx = canvas.getContext("2d");
@@ -322,8 +315,21 @@
       timerBar.style.width = pct + "%";
       timerText.textContent = remaining;
       timerBar.className = "timer-bar";
-      if (remaining <= 10) timerBar.classList.add("danger");
-      else if (remaining <= 20) timerBar.classList.add("warn");
+      if (remaining <= 15) timerBar.classList.add("danger");
+      else if (remaining <= 30) timerBar.classList.add("warn");
+    }
+
+    function setHostMode(host) {
+      isHost = host;
+      if (host) {
+        hostControls.classList.remove("hidden");
+        imageHiddenText.classList.add("hidden");
+      } else {
+        hostControls.classList.add("hidden");
+        imageHiddenText.classList.remove("hidden");
+        personImage.style.display = "none";
+        hostAnswerBox.classList.add("hidden");
+      }
     }
 
     showCreateBtn.addEventListener("click", () => { createBox.classList.remove("hidden"); joinBox.classList.add("hidden"); showCreateBtn.classList.add("active"); showJoinBtn.classList.remove("active"); clearJoinError(); });
@@ -353,14 +359,25 @@
     answerInput.addEventListener("keydown", e => { if (e.key === "Enter") answerBtn.click(); });
 
     socket.on("joined", (data) => {
-      isHost = data.isHost; roomCode = data.roomCode || "";
-      lobbyCard.classList.add("hidden"); gameUI.classList.remove("hidden");
+      isHost = data.isHost;
+      roomCode = data.roomCode || "";
+      lobbyCard.classList.add("hidden");
+      gameUI.classList.remove("hidden");
       roomCodeBox.textContent = roomCode || "—";
-      if (isHost) { hostControls.classList.remove("hidden"); imageHiddenText.classList.add("hidden"); addMessage("👑 Ты ведущий"); }
-      else { hostControls.classList.add("hidden"); imageHiddenText.classList.remove("hidden"); addMessage("🎮 Ты игрок"); }
+      setHostMode(data.isHost);
+      addMessage(data.isHost ? "👑 Ты ведущий" : "🎮 Ты игрок");
     });
 
-    socket.on("becameHost", () => { isHost = true; hostControls.classList.remove("hidden"); imageHiddenText.classList.add("hidden"); addMessage("👑 Теперь ты ведущий"); });
+    socket.on("becameHost", () => {
+      setHostMode(true);
+      addMessage("👑 Теперь ты ведущий!");
+    });
+
+    socket.on("lostHost", () => {
+      setHostMode(false);
+      addMessage("🎮 Теперь ты игрок");
+    });
+
     socket.on("joinError", (text) => showJoinError(text));
 
     socket.on("playersUpdated", (players) => {
@@ -377,7 +394,8 @@
     socket.on("roundStarted", (data) => {
       categoryBox.textContent = "Категория: " + (data.category || "—");
       turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      qCount.textContent = "0"; winOverlay.classList.add("hidden");
+      qCount.textContent = "0";
+      winOverlay.classList.add("hidden");
       addMessage("🎬 Раунд начался");
       timerWrap.style.display = "block";
       if (!isHost) { personImage.src = ""; personImage.style.display = "none"; imageHiddenText.classList.remove("hidden"); hostAnswerBox.classList.add("hidden"); }
@@ -386,7 +404,8 @@
     socket.on("hostRoundData", (data) => {
       if (!isHost) return;
       if (data.image) { personImage.src = data.image; personImage.style.display = "block"; } else { personImage.style.display = "none"; }
-      imageHiddenText.classList.add("hidden"); hostAnswerBox.classList.remove("hidden");
+      imageHiddenText.classList.add("hidden");
+      hostAnswerBox.classList.remove("hidden");
       hostAnswerBox.textContent = `Ответ: ${data.name} (${data.category})`;
     });
 
