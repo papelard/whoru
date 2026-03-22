@@ -52,7 +52,7 @@ const packs = {
     { name: "Kevin Durant", category: "basketball", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Kevin_Durant_2014_%28cropped%29.jpg/400px-Kevin_Durant_2014_%28cropped%29.jpg" },
     { name: "Kobe Bryant", category: "basketball", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kobe_Bryant_2014.jpg/400px-Kobe_Bryant_2014.jpg" },
     { name: "Michael Jordan", category: "basketball", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Michael_Jordan_in_2014.jpg/400px-Michael_Jordan_in_2014.jpg" },
-    { name: "Shaquille O'Neal", category: "basketball", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Shaquille_O%27Neal_2011.jpg/400px-Shaquille_O%27Neal_2011.jpg" },
+    { name: "Shaquille ONeal", category: "basketball", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Shaquille_O%27Neal_2011.jpg/400px-Shaquille_O%27Neal_2011.jpg" },
 
     // 💻 TECH
     { name: "Elon Musk", category: "tech", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/400px-Elon_Musk_Royal_Society_%28crop2%29.jpg" },
@@ -73,54 +73,39 @@ const packs = {
     { name: "PewDiePie", category: "gaming", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/PewDiePie_by_Gage_Skidmore.jpg/400px-PewDiePie_by_Gage_Skidmore.jpg" },
     { name: "MrBeast", category: "gaming", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/MrBeast_holding_a_Nickelodeon_Kids%27_Choice_Awards_blimp.jpg/400px-MrBeast_holding_a_Nickelodeon_Kids%27_Choice_Awards_blimp.jpg" },
 
-    // 🐭 CARTOONS (Disney / Pixar / DreamWorks)
-    { name: "Mickey Mouse", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Mickey_Mouse_%28Steamboat_Willie%29.jpg/400px-Mickey_Mouse_%28Steamboat_Willie%29.jpg" },
-    { name: "SpongeBob SquarePants", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/400px-SpongeBob_SquarePants_character.svg.png" },
+    // 🐭 CARTOONS
+    { name: "SpongeBob", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/400px-SpongeBob_SquarePants_character.svg.png" },
     { name: "Shrek", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/Shrek_and_Fiona.jpg/400px-Shrek_and_Fiona.jpg" },
     { name: "Simba", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3d/Simba_from_Disney%27s_The_Lion_King.jpg/400px-Simba_from_Disney%27s_The_Lion_King.jpg" },
     { name: "Woody", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Woody_%28Toy_Story%29.png/400px-Woody_%28Toy_Story%29.png" },
     { name: "Buzz Lightyear", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3f/Buzz_Lightyear.png/400px-Buzz_Lightyear.png" },
     { name: "Elsa", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Elsa_from_Disney%27s_Frozen_%282013%29.png/400px-Elsa_from_Disney%27s_Frozen_%282013%29.png" },
-    { name: "Moana", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Moana_%28Disney%29.png/400px-Moana_%28Disney%29.png" },
     { name: "Gru", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d0/Gru_Despicable_Me.png/400px-Gru_Despicable_Me.png" },
-    { name: "Minion", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6a/Minions_Banana.jpg/400px-Minions_Banana.jpg" },
-    { name: "Donkey Kong", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/DK64_Donkey_Kong_Artwork.png/400px-DK64_Donkey_Kong_Artwork.png" },
     { name: "Tom Cat", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Tom_Tom_and_Jerry.png/400px-Tom_Tom_and_Jerry.png" },
     { name: "Jerry Mouse", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Jerry_Mouse.png/400px-Jerry_Mouse.png" },
     { name: "Bugs Bunny", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/23/Bugs_Bunny.png/400px-Bugs_Bunny.png" },
     { name: "Bart Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/aa/Bart_Simpson_200px.png/400px-Bart_Simpson_200px.png" },
     { name: "Homer Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Homer_Simpson_2006.png/400px-Homer_Simpson_2006.png" },
-    { name: "Scooby-Doo", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Scooby-Doo_character.jpg/400px-Scooby-Doo_character.jpg" },
     { name: "Winnie the Pooh", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/1/10/Winnie_the_Pooh_with_honey_pot_hd.png/400px-Winnie_the_Pooh_with_honey_pot_hd.png" },
     { name: "Pikachu", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a6/Pok%C3%A9mon_Pikachu_art.png/400px-Pok%C3%A9mon_Pikachu_art.png" },
-    { name: "Kung Fu Panda", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Po_Kung_Fu_Panda.png/400px-Po_Kung_Fu_Panda.png" },
     { name: "Nemo", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/27/Nemo_from_Finding_Nemo.PNG/400px-Nemo_from_Finding_Nemo.PNG" },
-    { name: "Wall-E", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/WALLE_EVE.JPG/400px-WALLE_EVE.JPG" },
     { name: "Puss in Boots", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Puss_in_Boots_%28Shrek%29.png/400px-Puss_in_Boots_%28Shrek%29.png" },
-    { name: "Paddington Bear", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/66/Paddington_Bear_-_Journey_to_Peru_cropped.png/400px-Paddington_Bear_-_Journey_to_Peru_cropped.png" },
 
-    // 🇷🇺 CARTOONS RUSSIAN
+    // 🇷🇺 CARTOONS RU
     { name: "Cheburashka", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/64/Cheburashka.jpg/400px-Cheburashka.jpg" },
     { name: "Crocodile Gena", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/25/Gena_the_Crocodile.jpg/400px-Gena_the_Crocodile.jpg" },
     { name: "Masha", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/68/Masha_and_the_Bear.jpg/400px-Masha_and_the_Bear.jpg" },
-    { name: "Hedgehog in the Fog", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/68/Hedgehog_in_the_Fog.jpg/400px-Hedgehog_in_the_Fog.jpg" },
     { name: "Nu Pogodi Wolf", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/Nu_Pogodi.jpg/400px-Nu_Pogodi.jpg" },
-    { name: "Fixiki", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/2f/Fixiki_characters.jpg/400px-Fixiki_characters.jpg" },
     { name: "Luntik", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5e/Luntik.jpg/400px-Luntik.jpg" },
 
     // 🇯🇵 ANIME
     { name: "Naruto", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/94/NarutoPart1.jpg/400px-NarutoPart1.jpg" },
     { name: "Goku", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Dragon_Ball_Z_Son_Goku.jpg/400px-Dragon_Ball_Z_Son_Goku.jpg" },
     { name: "Luffy", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Monkey_D_Luffy.png/400px-Monkey_D_Luffy.png" },
-    { name: "Pikachu", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a6/Pok%C3%A9mon_Pikachu_art.png/400px-Pok%C3%A9mon_Pikachu_art.png" },
     { name: "Totoro", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/0/02/My_Neighbor_Totoro_-_Totoro.jpg/400px-My_Neighbor_Totoro_-_Totoro.jpg" },
     { name: "Doraemon", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/b/bd/Doraemon_character.png/400px-Doraemon_character.png" },
     { name: "Sasuke", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/21/Sasuke_Uchiha.png/400px-Sasuke_Uchiha.png" },
-    { name: "Gojo Satoru", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b7/Gojo_Satoru.png/400px-Gojo_Satoru.png" },
     { name: "Levi Ackerman", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/68/Levi_Ackerman.png/400px-Levi_Ackerman.png" },
-    { name: "Ichigo Kurosaki", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5b/Bleach_vol_01.jpg/400px-Bleach_vol_01.jpg" },
-    { name: "Light Yagami", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Death_Note_volume_1.jpg/400px-Death_Note_volume_1.jpg" },
-    { name: "Edward Elric", category: "anime", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/27/Fullmetal_Alchemist_volume_1.jpg/400px-Fullmetal_Alchemist_volume_1.jpg" },
 
     // 🦸 SUPERHEROES
     { name: "Spider-Man", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/21/Web_of_Spider-Man_Vol_1_129-1.png/400px-Web_of_Spider-Man_Vol_1_129-1.png" },
@@ -130,21 +115,16 @@ const packs = {
     { name: "Wonder Woman", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Wonder_Woman.jpg/400px-Wonder_Woman.jpg" },
     { name: "Captain America", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Captain_America_%28circa_2018%29.png/400px-Captain_America_%28circa_2018%29.png" },
     { name: "Thor", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Thor_avengers_age_of_ultron.jpg/400px-Thor_avengers_age_of_ultron.jpg" },
-    { name: "Hulk", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Hulk_%28comics_character%29.jpg/400px-Hulk_%28comics_character%29.jpg" },
     { name: "Deadpool", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/Deadpool_%28Marvel_Comics_character%29.png/400px-Deadpool_%28Marvel_Comics_character%29.png" },
-    { name: "Black Panther", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/en/thumb/1/10/Black_Panther_%28Marvel_Comics_character%29.jpg/400px-Black_Panther_%28Marvel_Comics_character%29.jpg" },
 
-    // 🎮 VIDEO GAME CHARACTERS
+    // 🕹️ VIDEOGAMES
     { name: "Mario", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/MarioNSMBUDeluxe.png/400px-MarioNSMBUDeluxe.png" },
-    { name: "Sonic the Hedgehog", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Sonic_the_Hedgehog_promotional_art.png/400px-Sonic_the_Hedgehog_promotional_art.png" },
+    { name: "Sonic", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Sonic_the_Hedgehog_promotional_art.png/400px-Sonic_the_Hedgehog_promotional_art.png" },
     { name: "Link", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/Link_Artwork_1_%28Breath_of_the_Wild%29.png/400px-Link_Artwork_1_%28Breath_of_the_Wild%29.png" },
-    { name: "Master Chief", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4b/Master_Chief_%28Halo%29.jpg/400px-Master_Chief_%28Halo%29.jpg" },
     { name: "Kratos", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f0/Kratos_God_of_War.jpg/400px-Kratos_God_of_War.jpg" },
     { name: "Lara Croft", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/Lara_Croft_-_Definitive_Edition.jpg/400px-Lara_Croft_-_Definitive_Edition.jpg" },
     { name: "Geralt of Rivia", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/Witcher3_Geralt.jpg/400px-Witcher3_Geralt.jpg" },
-    { name: "Arthur Morgan", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Arthur_Morgan_-_Red_Dead_Redemption_2.png/400px-Arthur_Morgan_-_Red_Dead_Redemption_2.png" },
-    { name: "Steve", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Steve_Minecraft.png/400px-Steve_Minecraft.png" },
-    { name: "Fortnite Character", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Fortnite_-_Jonesy_character_art.jpg/400px-Fortnite_-_Jonesy_character_art.jpg" }
+    { name: "Steve Minecraft", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Steve_Minecraft.png/400px-Steve_Minecraft.png" }
 
   ]
 };
