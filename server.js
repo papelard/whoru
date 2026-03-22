@@ -10,26 +10,20 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 const rooms = {};
-const TURN_TIMER_SECONDS = 30;
+const TURN_TIMER_SECONDS = 60;
 
 function generateRoomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   do {
     code = "";
-    for (let i = 0; i < 5; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
-    }
+    for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
   } while (rooms[code]);
   return code;
 }
 
 function normalizeText(text) {
-  return String(text || "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}\s]/gu, "")
-    .replace(/\s+/g, " ");
+  return String(text || "").toLowerCase().trim().replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ");
 }
 
 function isCorrectAnswer(input, answer) {
@@ -60,17 +54,45 @@ function getRoomBySocket(socket) {
   return rooms[roomCode] || null;
 }
 
+// Игроки без ведущего
+function getPlayers(room) {
+  return room.players.filter(p => p.id !== room.hostId);
+}
+
+// Передать роль ведущего следующему по кругу
+function rotateHost(room) {
+  if (room.players.length < 2) return;
+  const currentHostIndex = room.players.findIndex(p => p.id === room.hostId);
+  const nextHostIndex = (currentHostIndex + 1) % room.players.length;
+  const newHost = room.players[nextHostIndex];
+  room.hostId = newHost.id;
+  room.currentTurnIndex = 0;
+
+  // Сообщить всем кто теперь ведущий
+  io.to(room.code).emit("systemMessage", `👑 Теперь ведущий: ${newHost.name}`);
+
+  // Новый ведущий получает уведомление
+  io.to(newHost.id).emit("becameHost");
+
+  // Остальные игроки теряют роль ведущего
+  for (const player of room.players) {
+    if (player.id !== newHost.id) {
+      io.to(player.id).emit("lostHost");
+    }
+  }
+}
+
 function emitRoomPlayers(roomCode) {
   const room = rooms[roomCode];
   if (!room) return;
-  io.to(roomCode).emit(
-    "playersUpdated",
-    room.players.map((player, index) => ({
+  const players = getPlayers(room);
+  io.to(roomCode).emit("playersUpdated",
+    room.players.map((player) => ({
       id: player.id,
       name: player.name,
       score: player.score,
       isHost: player.id === room.hostId,
-      isTurn: room.gameStarted && index === room.currentTurnIndex
+      isTurn: room.gameStarted && players[room.currentTurnIndex]?.id === player.id
     }))
   );
 }
@@ -91,15 +113,14 @@ function startTurnTimer(roomCode) {
   if (!room) return;
   clearTurnTimer(room);
   let remaining = TURN_TIMER_SECONDS;
-  room._turnTimerRemaining = remaining;
   io.to(roomCode).emit("timerUpdate", { remaining });
   room._turnTimer = setInterval(() => {
     remaining--;
-    room._turnTimerRemaining = remaining;
     io.to(roomCode).emit("timerUpdate", { remaining });
     if (remaining <= 0) {
       clearTurnTimer(room);
-      const currentPlayer = room.players[room.currentTurnIndex];
+      const players = getPlayers(room);
+      const currentPlayer = players[room.currentTurnIndex];
       if (currentPlayer) {
         emitRoomMessage(roomCode, `⏰ Время вышло! Ход ${currentPlayer.name} пропущен`);
       }
@@ -112,24 +133,35 @@ function startTurnTimer(roomCode) {
 
 function startRound(roomCode, category = "") {
   const room = rooms[roomCode];
-  if (!room || !room.players.length) return;
-  const character = getRandomCharacter(category);
-  if (!character) {
-    emitRoomMessage(roomCode, "Персонаж не найден для этой категории");
+  if (!room) return;
+
+  const players = getPlayers(room);
+  if (!players.length) {
+    emitRoomMessage(roomCode, "Нет игроков для игры");
     return;
   }
+
+  const character = getRandomCharacter(category);
+  if (!character) {
+    emitRoomMessage(roomCode, "Персонаж не найден");
+    return;
+  }
+
   room.currentCharacter = character;
   room.gameStarted = true;
   room.selectedCategory = category || "";
   room.questionCount = 0;
-  if (room.currentTurnIndex >= room.players.length) room.currentTurnIndex = 0;
-  const currentPlayer = room.players[room.currentTurnIndex];
+  room.currentTurnIndex = 0;
+
+  const currentPlayer = players[0];
+
   io.to(roomCode).emit("roundStarted", {
     category: room.currentCharacter.category,
     turnPlayerId: currentPlayer?.id || null,
     turnPlayerName: currentPlayer?.name || "—",
     questionCount: 0
   });
+
   if (room.hostId) {
     io.to(room.hostId).emit("hostRoundData", {
       image: room.currentCharacter.image,
@@ -137,25 +169,32 @@ function startRound(roomCode, category = "") {
       category: room.currentCharacter.category
     });
   }
-  for (const player of room.players) {
-    if (player.id !== room.hostId) {
-      io.to(player.id).emit("playerRoundData", { image: null });
-    }
+
+  for (const player of players) {
+    io.to(player.id).emit("playerRoundData", { image: null });
   }
+
   emitRoomPlayers(roomCode);
   startTurnTimer(roomCode);
 }
 
 function nextTurn(roomCode) {
   const room = rooms[roomCode];
-  if (!room || !room.players.length) return;
+  if (!room) return;
+
+  const players = getPlayers(room);
+  if (!players.length) return;
+
   room.currentTurnIndex++;
-  if (room.currentTurnIndex >= room.players.length) room.currentTurnIndex = 0;
-  const currentPlayer = room.players[room.currentTurnIndex];
+  if (room.currentTurnIndex >= players.length) room.currentTurnIndex = 0;
+
+  const currentPlayer = players[room.currentTurnIndex];
+
   io.to(roomCode).emit("turnChanged", {
     turnPlayerId: currentPlayer?.id || null,
     turnPlayerName: currentPlayer?.name || "—"
   });
+
   emitRoomPlayers(roomCode);
   startTurnTimer(roomCode);
 }
@@ -185,8 +224,7 @@ io.on("connection", (socket) => {
       gameStarted: false,
       selectedCategory: "",
       questionCount: 0,
-      _turnTimer: null,
-      _turnTimerRemaining: 0
+      _turnTimer: null
     };
     socket.join(roomCode);
     socket.data.roomCode = roomCode;
@@ -218,49 +256,79 @@ io.on("connection", (socket) => {
     const room = getRoomBySocket(socket);
     if (!room) return;
     if (socket.id !== room.hostId) { socket.emit("systemMessage", "Только ведущий может начать раунд"); return; }
-    if (!room.players.length) { socket.emit("systemMessage", "Нет игроков"); return; }
+    const players = getPlayers(room);
+    if (!players.length) { socket.emit("systemMessage", "Нет игроков"); return; }
     startRound(room.code, category || "");
   });
 
   socket.on("questionResult", (result) => {
     const room = getRoomBySocket(socket);
-    if (!room || !room.gameStarted || !room.players.length) return;
-    const currentPlayer = room.players[room.currentTurnIndex];
-    if (!currentPlayer) return;
-    if (socket.id !== currentPlayer.id) { socket.emit("systemMessage", "Сейчас не твой ход"); return; }
+    if (!room || !room.gameStarted) return;
+
+    if (socket.id !== room.hostId) {
+      socket.emit("systemMessage", "Только ведущий отвечает на вопросы");
+      return;
+    }
+
     room.questionCount = (room.questionCount || 0) + 1;
     io.to(room.code).emit("questionCountUpdate", { count: room.questionCount });
+
     if (result === "yes") {
       clearTurnTimer(room);
-      socket.emit("systemMessage", "Ответ: да");
+      io.to(room.code).emit("systemMessage", "✅ Да!");
       startTurnTimer(room.code);
       return;
     }
-    if (result === "no") { clearTurnTimer(room); nextTurn(room.code); }
+    if (result === "no") {
+      clearTurnTimer(room);
+      io.to(room.code).emit("systemMessage", "❌ Нет!");
+      nextTurn(room.code);
+    }
     if (result === "dontknow") {
       clearTurnTimer(room);
-      emitRoomMessage(room.code, `${currentPlayer.name} не знает — ход переходит`);
+      io.to(room.code).emit("systemMessage", "🤷 Не знаю!");
       nextTurn(room.code);
     }
   });
 
   socket.on("submitAnswer", (answer) => {
     const room = getRoomBySocket(socket);
-    if (!room || !room.gameStarted || !room.currentCharacter || !room.players.length) return;
-    const currentPlayer = room.players[room.currentTurnIndex];
+    if (!room || !room.gameStarted || !room.currentCharacter) return;
+
+    if (socket.id === room.hostId) {
+      socket.emit("systemMessage", "Ведущий не может угадывать");
+      return;
+    }
+
+    const players = getPlayers(room);
+    const currentPlayer = players[room.currentTurnIndex];
     if (!currentPlayer) return;
-    if (socket.id !== currentPlayer.id) { socket.emit("systemMessage", "Сейчас не твой ход"); return; }
+
+    if (socket.id !== currentPlayer.id) {
+      socket.emit("systemMessage", "Сейчас не твой ход");
+      return;
+    }
+
     if (isCorrectAnswer(answer, room.currentCharacter.name)) {
       clearTurnTimer(room);
       currentPlayer.score += 1;
+
       io.to(room.code).emit("roundWinner", {
         winnerId: currentPlayer.id,
         winnerName: currentPlayer.name,
         correctName: room.currentCharacter.name,
         image: room.currentCharacter.image
       });
+
       emitRoomPlayers(room.code);
-      setTimeout(() => { startRound(room.code, room.selectedCategory || ""); }, 4000);
+
+      // Передаём роль ведущего следующему по кругу
+      setTimeout(() => {
+        rotateHost(room);
+        emitRoomPlayers(room.code);
+        // Только новый ведущий может запустить следующий раунд
+      }, 4000);
+
     } else {
       socket.emit("answerWrong");
       room.questionCount = (room.questionCount || 0) + 1;
@@ -281,7 +349,8 @@ io.on("connection", (socket) => {
       if (room.hostId) io.to(room.hostId).emit("becameHost");
     }
     if (!room.players.length) { clearTurnTimer(room); delete rooms[roomCode]; return; }
-    if (room.currentTurnIndex >= room.players.length) room.currentTurnIndex = 0;
+    const players = getPlayers(room);
+    if (room.currentTurnIndex >= players.length) room.currentTurnIndex = 0;
     if (disconnected) emitRoomMessage(roomCode, `${disconnected.name} вышел из игры`);
     emitRoomPlayers(roomCode);
     cleanupRoomIfEmpty(roomCode);
