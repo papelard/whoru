@@ -4,161 +4,397 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WhoRu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --bg: #06101f;
+      --bg2: #0d1d35;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.1);
+      --accent: #3b82f6;
+      --accent2: #22c55e;
+      --accent3: #f59e0b;
+      --danger: #ef4444;
+      --text: #e8f0fe;
+      --muted: rgba(255,255,255,0.45);
+      --radius: 18px;
+      --radius-sm: 12px;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #081633;
-      color: white;
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.18) 0%, transparent 70%);
     }
 
     .container {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
+      padding: 24px 16px 60px;
     }
 
-    h1 {
-      margin: 0 0 20px;
-      font-size: 44px;
+    /* ── Header ── */
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
     }
 
     h2 {
-      margin-top: 0;
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 14px;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
+    .hidden { display: none !important; }
 
-    .hidden {
-      display: none;
-    }
-
+    /* ── Inputs / Buttons ── */
     input, select, button {
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      padding: 12px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
     }
 
     input, select {
       width: 100%;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+      outline: none;
+      transition: border-color .2s;
     }
+    input:focus, select:focus { border-color: var(--accent); }
+    input::placeholder { color: var(--muted); }
+    select option { background: #0d1d35; }
 
     button {
-      background: #3b82f6;
+      background: var(--accent);
       color: white;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 700;
+      transition: transform .12s, opacity .12s;
+      user-select: none;
     }
+    button:active { transform: scale(0.96); }
+    button:hover { opacity: 0.88; }
+    button.green { background: var(--accent2); }
+    button.red { background: var(--danger); }
+    button.amber { background: var(--accent3); color: #000; }
+    button.gray { background: rgba(255,255,255,0.12); color: var(--text); }
 
     .row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
+    .row > * { flex: 1; min-width: 140px; }
 
-    .row > * {
-      flex: 1;
-      min-width: 160px;
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
     }
+    .tab-btn { flex: 1; background: rgba(255,255,255,0.08); }
+    .tab-btn.active { background: var(--accent); }
 
+    /* ── Room code ── */
+    .room-code-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .room-code {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 4px;
+      color: #60a5fa;
+    }
+    .invite-btn {
+      font-size: 13px;
+      padding: 8px 14px;
+      background: rgba(59,130,246,0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .2s;
+      flex: unset;
+    }
+    .invite-btn:hover { background: rgba(59,130,246,0.35); }
+    .invite-copied {
+      font-size: 13px;
+      color: var(--accent2);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .invite-copied.show { opacity: 1; }
+
+    /* ── Top grid ── */
     .top-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 16px;
     }
-
-    @media (min-width: 960px) {
-      .top-grid {
-        grid-template-columns: 1.2fr 0.8fr;
-      }
+    @media (min-width: 800px) {
+      .top-grid { grid-template-columns: 1.3fr 0.7fr; }
     }
 
-    #personImage {
+    /* ── Timer ── */
+    .timer-wrap {
+      margin: 12px 0 4px;
+    }
+    .timer-bar-bg {
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .timer-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--accent2);
+      transition: width 0.9s linear, background 0.5s;
       width: 100%;
-      max-width: 360px;
-      display: none;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-      margin: 0 auto;
     }
-
-    .players-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .timer-bar.warn { background: var(--accent3); }
+    .timer-bar.danger { background: var(--danger); }
+    .timer-text {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 5px;
+      text-align: right;
     }
+    .timer-text span { color: var(--text); font-weight: 700; }
 
-    .players-list li {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
+    /* ── Question counter ── */
+    .q-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      padding: 5px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
+    .q-counter strong { color: var(--text); }
 
-    .turn {
-      border: 2px solid #22c55e;
+    /* ── Action buttons ── */
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
     }
+    .action-row button { flex: 1; }
+    #dontKnowBtn { background: rgba(255,255,255,0.12); }
 
-    .host {
-      border: 2px solid #f59e0b;
-    }
-
-    .msg {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-top: 8px;
-      word-break: break-word;
-    }
-
-    .center {
-      text-align: center;
-    }
-
+    /* ── Turn indicator ── */
     #turnBox {
-      font-weight: bold;
+      font-weight: 700;
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: 15px;
     }
 
     #hostAnswerBox {
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-weight: 700;
     }
 
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
+    /* ── Character card ── */
+    .char-card {
+      text-align: center;
+    }
+    #personImage {
+      width: 100%;
+      max-width: 320px;
+      display: none;
+      border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      margin: 0 auto 12px;
+      transition: opacity .4s;
+    }
+    #personImage.reveal {
+      animation: revealPop .5s cubic-bezier(.2,1.6,.5,1) forwards;
+    }
+    @keyframes revealPop {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #imageHiddenText {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
     }
 
-    .tab-btn {
-      flex: 1;
+    /* ── Players ── */
+    .players-list { list-style: none; }
+    .players-list li {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: border-color .3s;
+    }
+    .players-list li.turn {
+      border-color: var(--accent2);
+      background: rgba(34,197,94,0.08);
+    }
+    .players-list li.host {
+      border-color: var(--accent3);
+      background: rgba(245,158,11,0.08);
     }
 
-    .room-code {
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 2px;
+    /* ── Messages ── */
+    .msg-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 8px 12px;
       margin-top: 8px;
+      font-size: 13px;
+      word-break: break-word;
+      animation: fadeSlide .25s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Win overlay ── */
+    #winOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+      animation: fadeIn .3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .win-card {
+      background: linear-gradient(135deg, #0d1d35, #162a4a);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 24px;
+      padding: 32px 28px;
+      text-align: center;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+      animation: popIn .4s cubic-bezier(.2,1.6,.5,1);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .win-card img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .win-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 34px;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .win-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 6px 0 4px;
+    }
+    .win-answer {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* ── Error ── */
+    .error-msg {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #fca5a5;
+    }
+
+    /* ── Confetti canvas ── */
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 500px) {
+      .logo { font-size: 38px; }
+      .action-row { flex-direction: column; }
+      .row > * { min-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>WhoRu</h1>
+  <canvas id="confettiCanvas"></canvas>
 
+  <div class="container">
+    <div class="logo">WhoRu</div>
+
+    <!-- Lobby -->
     <div id="lobbyCard" class="card">
       <div class="tabs">
-        <button id="showCreateBtn" class="tab-btn">Создать комнату</button>
+        <button id="showCreateBtn" class="tab-btn active">Создать комнату</button>
         <button id="showJoinBtn" class="tab-btn">Войти в комнату</button>
       </div>
 
@@ -174,18 +410,25 @@
         <div class="row">
           <input id="joinNicknameInput" type="text" placeholder="Ваш ник" />
           <input id="joinRoomCodeInput" type="text" placeholder="Код комнаты" />
-          <input id="joinPasswordInput" type="text" placeholder="Пароль комнаты" />
+          <input id="joinPasswordInput" type="text" placeholder="Пароль" />
           <button id="joinRoomBtn">Войти</button>
         </div>
       </div>
 
-      <div id="joinError" class="msg hidden"></div>
+      <div id="joinError" class="error-msg hidden"></div>
     </div>
 
+    <!-- Game UI -->
     <div id="gameUI" class="hidden">
       <div class="card">
-        <div>Комната:</div>
-        <div id="roomCodeBox" class="room-code">—</div>
+        <div class="room-code-row">
+          <div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:2px;">КОД КОМНАТЫ</div>
+            <div id="roomCodeBox" class="room-code">—</div>
+          </div>
+          <button class="invite-btn" id="inviteBtn">🔗 Копировать ссылку</button>
+          <span class="invite-copied" id="inviteCopied">Скопировано!</span>
+        </div>
       </div>
 
       <div class="top-grid">
@@ -193,37 +436,58 @@
           <div class="card">
             <h2>Управление</h2>
 
+            <!-- Question counter -->
+            <div class="q-counter" id="qCounter">
+              ❓ Вопросов: <strong id="qCount">0</strong>
+            </div>
+
+            <!-- Host controls -->
             <div id="hostControls" class="hidden">
               <div class="row">
                 <select id="categorySelect">
                   <option value="">Все категории</option>
-                  <option value="football">Футбол</option>
-                  <option value="music">Музыка</option>
-                  <option value="actors">Актёры</option>
+                  <option value="football">⚽ Футбол</option>
+                  <option value="basketball">🏀 Баскетбол</option>
+                  <option value="music">🎵 Музыка</option>
+                  <option value="actors">🎬 Актёры</option>
+                  <option value="tech">💻 Технологии</option>
+                  <option value="gaming">🎮 Гейминг</option>
+                  <option value="sport">🥊 Спорт</option>
                 </select>
-                <button id="startRoundBtn">Старт</button>
+                <button id="startRoundBtn" class="green">▶ Старт</button>
               </div>
             </div>
 
-            <div class="row" style="margin-top: 12px;">
-              <button id="yesBtn">Да</button>
-              <button id="noBtn">Нет</button>
+            <!-- Timer -->
+            <div class="timer-wrap" id="timerWrap" style="display:none;">
+              <div class="timer-bar-bg">
+                <div class="timer-bar" id="timerBar"></div>
+              </div>
+              <div class="timer-text">⏱ <span id="timerText">30</span> сек</div>
             </div>
 
-            <div class="row" style="margin-top: 12px;">
-              <input id="answerInput" type="text" placeholder="Кто это?" />
+            <!-- Answer buttons -->
+            <div class="action-row" style="margin-top:14px;">
+              <button id="yesBtn" class="green">✅ Да</button>
+              <button id="noBtn" class="red">❌ Нет</button>
+              <button id="dontKnowBtn" class="gray">🤷 Не знаю</button>
+            </div>
+
+            <!-- Guess input -->
+            <div class="row" style="margin-top:10px;">
+              <input id="answerInput" type="text" placeholder="Кто это? Введи имя…" />
               <button id="answerBtn">Ответ</button>
             </div>
 
-            <div id="turnBox" class="msg">Ход: —</div>
-            <div id="hostAnswerBox" class="msg hidden"></div>
+            <div id="turnBox">Ход: —</div>
+            <div id="hostAnswerBox" class="hidden"></div>
           </div>
 
-          <div class="card center">
+          <div class="card char-card">
             <h2>Персонаж</h2>
             <img id="personImage" alt="character" />
-            <div id="imageHiddenText" class="msg">Игрокам картинка скрыта</div>
-            <div id="categoryBox" class="msg">Категория: —</div>
+            <div id="imageHiddenText">🙈 Картинка скрыта от игроков</div>
+            <div id="categoryBox" style="font-size:14px; color:var(--muted);">Категория: —</div>
           </div>
         </div>
 
@@ -242,10 +506,21 @@
     </div>
   </div>
 
+  <!-- Win overlay -->
+  <div id="winOverlay" class="hidden">
+    <div class="win-card">
+      <img id="winImage" src="" alt="" />
+      <div class="win-title">🏆 Победа!</div>
+      <div class="win-name" id="winPlayerName"></div>
+      <div class="win-answer" id="winAnswerText"></div>
+    </div>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
+    // ── DOM refs ──────────────────────────────────────────────────────────────
     const lobbyCard = document.getElementById("lobbyCard");
     const gameUI = document.getElementById("gameUI");
 
@@ -262,16 +537,25 @@
     const joinRoomCodeInput = document.getElementById("joinRoomCodeInput");
     const joinPasswordInput = document.getElementById("joinPasswordInput");
     const joinRoomBtn = document.getElementById("joinRoomBtn");
-
     const joinError = document.getElementById("joinError");
 
     const roomCodeBox = document.getElementById("roomCodeBox");
+    const inviteBtn = document.getElementById("inviteBtn");
+    const inviteCopied = document.getElementById("inviteCopied");
+
     const hostControls = document.getElementById("hostControls");
     const categorySelect = document.getElementById("categorySelect");
     const startRoundBtn = document.getElementById("startRoundBtn");
 
+    const timerWrap = document.getElementById("timerWrap");
+    const timerBar = document.getElementById("timerBar");
+    const timerText = document.getElementById("timerText");
+
+    const qCount = document.getElementById("qCount");
+
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
+    const dontKnowBtn = document.getElementById("dontKnowBtn");
     const answerInput = document.getElementById("answerInput");
     const answerBtn = document.getElementById("answerBtn");
 
@@ -283,16 +567,77 @@
     const playersList = document.getElementById("playersList");
     const messages = document.getElementById("messages");
 
+    const winOverlay = document.getElementById("winOverlay");
+    const winImage = document.getElementById("winImage");
+    const winPlayerName = document.getElementById("winPlayerName");
+    const winAnswerText = document.getElementById("winAnswerText");
+
     let isHost = false;
     let roomCode = "";
+    let timerDuration = 30;
 
+    // ── Confetti ──────────────────────────────────────────────────────────────
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let confettiParticles = [];
+    let confettiRunning = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      confettiParticles = [];
+      for (let i = 0; i < 160; i++) {
+        confettiParticles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          w: Math.random() * 12 + 6,
+          h: Math.random() * 6 + 4,
+          color: `hsl(${Math.random() * 360},80%,60%)`,
+          rotation: Math.random() * 360,
+          speed: Math.random() * 4 + 2,
+          drift: Math.random() * 2 - 1,
+          spin: Math.random() * 8 - 4,
+          opacity: 1
+        });
+      }
+      confettiRunning = true;
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      if (!confettiRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      confettiParticles.forEach(p => {
+        p.y += p.speed;
+        p.x += p.drift;
+        p.rotation += p.spin;
+        if (p.y > canvas.height + 20) return;
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (alive) requestAnimationFrame(animateConfetti);
+      else { confettiRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
     function addMessage(text) {
       const div = document.createElement("div");
-      div.className = "msg";
+      div.className = "msg-item";
       div.textContent = text;
       messages.prepend(div);
-
-      while (messages.children.length > 8) {
+      while (messages.children.length > 10) {
         messages.removeChild(messages.lastChild);
       }
     }
@@ -307,21 +652,50 @@
       joinError.classList.add("hidden");
     }
 
-    function showCreateTab() {
+    function updateTimer(remaining) {
+      const pct = (remaining / timerDuration) * 100;
+      timerBar.style.width = pct + "%";
+      timerText.textContent = remaining;
+      timerBar.className = "timer-bar";
+      if (remaining <= 10) timerBar.classList.add("danger");
+      else if (remaining <= 20) timerBar.classList.add("warn");
+    }
+
+    // ── Tabs ──────────────────────────────────────────────────────────────────
+    showCreateBtn.addEventListener("click", () => {
       createBox.classList.remove("hidden");
       joinBox.classList.add("hidden");
+      showCreateBtn.classList.add("active");
+      showJoinBtn.classList.remove("active");
       clearJoinError();
-    }
+    });
 
-    function showJoinTab() {
+    showJoinBtn.addEventListener("click", () => {
       createBox.classList.add("hidden");
       joinBox.classList.remove("hidden");
+      showJoinBtn.classList.add("active");
+      showCreateBtn.classList.remove("active");
       clearJoinError();
+    });
+
+    // ── Invite link ───────────────────────────────────────────────────────────
+    inviteBtn.addEventListener("click", () => {
+      const url = `${location.origin}?room=${roomCode}`;
+      navigator.clipboard.writeText(url).then(() => {
+        inviteCopied.classList.add("show");
+        setTimeout(() => inviteCopied.classList.remove("show"), 2000);
+      });
+    });
+
+    // Auto-fill room code from URL param
+    const urlParams = new URLSearchParams(location.search);
+    const urlRoom = urlParams.get("room");
+    if (urlRoom) {
+      joinRoomCodeInput.value = urlRoom.toUpperCase();
+      showJoinBtn.click();
     }
 
-    showCreateBtn.addEventListener("click", showCreateTab);
-    showJoinBtn.addEventListener("click", showJoinTab);
-
+    // ── Room actions ──────────────────────────────────────────────────────────
     createRoomBtn.addEventListener("click", () => {
       clearJoinError();
       socket.emit("createRoom", {
@@ -339,37 +713,21 @@
       });
     });
 
-    createNicknameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") createRoomBtn.click();
-    });
-
-    createPasswordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") createRoomBtn.click();
-    });
-
-    joinNicknameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") joinRoomBtn.click();
-    });
-
-    joinRoomCodeInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") joinRoomBtn.click();
-    });
-
-    joinPasswordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") joinRoomBtn.click();
-    });
+    // Enter key support
+    [createNicknameInput, createPasswordInput].forEach(el =>
+      el.addEventListener("keydown", e => { if (e.key === "Enter") createRoomBtn.click(); })
+    );
+    [joinNicknameInput, joinRoomCodeInput, joinPasswordInput].forEach(el =>
+      el.addEventListener("keydown", e => { if (e.key === "Enter") joinRoomBtn.click(); })
+    );
 
     startRoundBtn.addEventListener("click", () => {
       socket.emit("startRound", categorySelect.value);
     });
 
-    yesBtn.addEventListener("click", () => {
-      socket.emit("questionResult", "yes");
-    });
-
-    noBtn.addEventListener("click", () => {
-      socket.emit("questionResult", "no");
-    });
+    yesBtn.addEventListener("click", () => socket.emit("questionResult", "yes"));
+    noBtn.addEventListener("click", () => socket.emit("questionResult", "no"));
+    dontKnowBtn.addEventListener("click", () => socket.emit("questionResult", "dontknow"));
 
     answerBtn.addEventListener("click", () => {
       const answer = answerInput.value.trim();
@@ -377,13 +735,11 @@
       socket.emit("submitAnswer", answer);
       answerInput.value = "";
     });
-
-    answerInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        answerBtn.click();
-      }
+    answerInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") answerBtn.click();
     });
 
+    // ── Socket events ─────────────────────────────────────────────────────────
     socket.on("joined", (data) => {
       isHost = data.isHost;
       roomCode = data.roomCode || "";
@@ -395,11 +751,11 @@
       if (isHost) {
         hostControls.classList.remove("hidden");
         imageHiddenText.classList.add("hidden");
-        addMessage("Ты ведущий");
+        addMessage("👑 Ты ведущий");
       } else {
         hostControls.classList.add("hidden");
         imageHiddenText.classList.remove("hidden");
-        addMessage("Ты игрок");
+        addMessage("🎮 Ты игрок");
       }
     });
 
@@ -407,27 +763,21 @@
       isHost = true;
       hostControls.classList.remove("hidden");
       imageHiddenText.classList.add("hidden");
-      addMessage("Теперь ты ведущий");
+      addMessage("👑 Теперь ты ведущий");
     });
 
-    socket.on("joinError", (text) => {
-      showJoinError(text);
-    });
+    socket.on("joinError", (text) => showJoinError(text));
 
     socket.on("playersUpdated", (players) => {
       playersList.innerHTML = "";
-
       players.forEach((player) => {
         const li = document.createElement("li");
-
         if (player.isTurn) li.classList.add("turn");
         if (player.isHost) li.classList.add("host");
-
         li.textContent =
-          `${player.name} — ${player.score} очк.` +
+          `${player.name}  ${player.score} очк.` +
           (player.isHost ? " 👑" : "") +
-          (player.isTurn ? " 🎯 ход" : "");
-
+          (player.isTurn ? " 🎯" : "");
         playersList.appendChild(li);
       });
     });
@@ -435,7 +785,11 @@
     socket.on("roundStarted", (data) => {
       categoryBox.textContent = "Категория: " + (data.category || "—");
       turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      addMessage("Раунд начался");
+      qCount.textContent = "0";
+      winOverlay.classList.add("hidden");
+      addMessage("🎬 Раунд начался");
+
+      timerWrap.style.display = "block";
 
       if (!isHost) {
         personImage.src = "";
@@ -447,18 +801,15 @@
 
     socket.on("hostRoundData", (data) => {
       if (!isHost) return;
-
       if (data.image) {
         personImage.src = data.image;
         personImage.style.display = "block";
       } else {
         personImage.style.display = "none";
       }
-
       imageHiddenText.classList.add("hidden");
       hostAnswerBox.classList.remove("hidden");
-      hostAnswerBox.textContent =
-        `Ответ для ведущего: ${data.name} (${data.category})`;
+      hostAnswerBox.textContent = `Ответ: ${data.name} (${data.category})`;
     });
 
     socket.on("playerRoundData", () => {
@@ -471,15 +822,51 @@
 
     socket.on("turnChanged", (data) => {
       turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      addMessage("Ход: " + (data.turnPlayerName || "—"));
+      addMessage("🎯 Ход: " + (data.turnPlayerName || "—"));
+    });
+
+    socket.on("timerUpdate", (data) => {
+      timerDuration = Math.max(timerDuration, data.remaining); // guess duration on first tick
+      updateTimer(data.remaining);
+    });
+
+    socket.on("questionCountUpdate", (data) => {
+      qCount.textContent = data.count;
     });
 
     socket.on("roundWinner", (data) => {
-      addMessage(`Победитель: ${data.winnerName}. Ответ: ${data.correctName}`);
+      // Show win overlay with image
+      winPlayerName.textContent = `${data.winnerName} угадал!`;
+      winAnswerText.textContent = `Это был: ${data.correctName}`;
+      if (data.image) {
+        winImage.src = data.image;
+        winImage.style.display = "block";
+      } else {
+        winImage.style.display = "none";
+      }
+      winOverlay.classList.remove("hidden");
+
+      // Also reveal image in the char card
+      if (data.image) {
+        personImage.src = data.image;
+        personImage.style.display = "block";
+        personImage.classList.remove("reveal");
+        void personImage.offsetWidth; // reflow
+        personImage.classList.add("reveal");
+        imageHiddenText.classList.add("hidden");
+      }
+
+      timerWrap.style.display = "none";
+      launchConfetti();
+      addMessage(`🏆 ${data.winnerName} угадал: ${data.correctName}`);
+
+      setTimeout(() => {
+        winOverlay.classList.add("hidden");
+      }, 4000);
     });
 
     socket.on("answerWrong", () => {
-      addMessage("Неправильно");
+      addMessage("❌ Неправильно");
     });
 
     socket.on("systemMessage", (text) => {

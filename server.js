@@ -11,17 +11,18 @@ app.use(express.static("public"));
 
 const rooms = {};
 
+// Timer duration in seconds per turn
+const TURN_TIMER_SECONDS = 30;
+
 function generateRoomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
-
   do {
     code = "";
     for (let i = 0; i < 5; i++) {
       code += chars[Math.floor(Math.random() * chars.length)];
     }
   } while (rooms[code]);
-
   return code;
 }
 
@@ -39,13 +40,10 @@ function isCorrectAnswer(input, answer) {
 
 function getRandomCharacter(category = "") {
   let list = packs.celebrities || [];
-
   if (category) {
     list = list.filter((item) => item.category === category);
   }
-
   if (!list.length) return null;
-
   return list[Math.floor(Math.random() * list.length)];
 }
 
@@ -62,7 +60,6 @@ function getRoomBySocket(socket) {
 function emitRoomPlayers(roomCode) {
   const room = rooms[roomCode];
   if (!room) return;
-
   io.to(roomCode).emit(
     "playersUpdated",
     room.players.map((player, index) => ({
@@ -79,19 +76,61 @@ function emitRoomMessage(roomCode, text) {
   io.to(roomCode).emit("systemMessage", text);
 }
 
+// ─── Timer ────────────────────────────────────────────────────────────────────
+
+function clearTurnTimer(room) {
+  if (room._turnTimer) {
+    clearInterval(room._turnTimer);
+    room._turnTimer = null;
+  }
+}
+
+function startTurnTimer(roomCode) {
+  const room = rooms[roomCode];
+  if (!room) return;
+
+  clearTurnTimer(room);
+
+  let remaining = TURN_TIMER_SECONDS;
+  room._turnTimerRemaining = remaining;
+
+  io.to(roomCode).emit("timerUpdate", { remaining });
+
+  room._turnTimer = setInterval(() => {
+    remaining--;
+    room._turnTimerRemaining = remaining;
+    io.to(roomCode).emit("timerUpdate", { remaining });
+
+    if (remaining <= 0) {
+      clearTurnTimer(room);
+      // Auto-skip: treat as "don't know"
+      const currentPlayer = room.players[room.currentTurnIndex];
+      if (currentPlayer) {
+        emitRoomMessage(roomCode, `⏰ Время вышло! Ход ${currentPlayer.name} пропущен`);
+      }
+      room.questionCount = (room.questionCount || 0) + 1;
+      io.to(roomCode).emit("questionCountUpdate", { count: room.questionCount });
+      nextTurn(roomCode);
+    }
+  }, 1000);
+}
+
+// ─── Round logic ──────────────────────────────────────────────────────────────
+
 function startRound(roomCode, category = "") {
   const room = rooms[roomCode];
   if (!room || !room.players.length) return;
 
   const character = getRandomCharacter(category);
   if (!character) {
-    emitRoomMessage(roomCode, "Персонаж не найден");
+    emitRoomMessage(roomCode, "Персонаж не найден для этой категории");
     return;
   }
 
   room.currentCharacter = character;
   room.gameStarted = true;
   room.selectedCategory = category || "";
+  room.questionCount = 0;
 
   if (room.currentTurnIndex >= room.players.length) {
     room.currentTurnIndex = 0;
@@ -102,7 +141,8 @@ function startRound(roomCode, category = "") {
   io.to(roomCode).emit("roundStarted", {
     category: room.currentCharacter.category,
     turnPlayerId: currentPlayer?.id || null,
-    turnPlayerName: currentPlayer?.name || "—"
+    turnPlayerName: currentPlayer?.name || "—",
+    questionCount: 0
   });
 
   if (room.hostId) {
@@ -115,13 +155,12 @@ function startRound(roomCode, category = "") {
 
   for (const player of room.players) {
     if (player.id !== room.hostId) {
-      io.to(player.id).emit("playerRoundData", {
-        image: null
-      });
+      io.to(player.id).emit("playerRoundData", { image: null });
     }
   }
 
   emitRoomPlayers(roomCode);
+  startTurnTimer(roomCode);
 }
 
 function nextTurn(roomCode) {
@@ -141,16 +180,19 @@ function nextTurn(roomCode) {
   });
 
   emitRoomPlayers(roomCode);
+  startTurnTimer(roomCode);
 }
 
 function cleanupRoomIfEmpty(roomCode) {
   const room = rooms[roomCode];
   if (!room) return;
-
   if (!room.players.length) {
+    clearTurnTimer(room);
     delete rooms[roomCode];
   }
 }
+
+// ─── Socket handlers ──────────────────────────────────────────────────────────
 
 io.on("connection", (socket) => {
   socket.on("createRoom", ({ nickname, password }) => {
@@ -168,27 +210,20 @@ io.on("connection", (socket) => {
       code: roomCode,
       password: cleanPassword,
       hostId: socket.id,
-      players: [
-        {
-          id: socket.id,
-          name: cleanName,
-          score: 0
-        }
-      ],
+      players: [{ id: socket.id, name: cleanName, score: 0 }],
       currentCharacter: null,
       currentTurnIndex: 0,
       gameStarted: false,
-      selectedCategory: ""
+      selectedCategory: "",
+      questionCount: 0,
+      _turnTimer: null,
+      _turnTimerRemaining: 0
     };
 
     socket.join(roomCode);
     socket.data.roomCode = roomCode;
 
-    socket.emit("joined", {
-      roomCode,
-      isHost: true,
-      playerName: cleanName
-    });
+    socket.emit("joined", { roomCode, isHost: true, playerName: cleanName });
 
     emitRoomPlayers(roomCode);
     emitRoomMessage(roomCode, `${cleanName} создал комнату`);
@@ -199,50 +234,24 @@ io.on("connection", (socket) => {
     const cleanRoomCode = String(roomCode || "").trim().toUpperCase();
     const cleanPassword = String(password || "").trim();
 
-    if (!cleanName) {
-      socket.emit("joinError", "Введите ник");
-      return;
-    }
-
-    if (!cleanRoomCode) {
-      socket.emit("joinError", "Введите код комнаты");
-      return;
-    }
+    if (!cleanName) { socket.emit("joinError", "Введите ник"); return; }
+    if (!cleanRoomCode) { socket.emit("joinError", "Введите код комнаты"); return; }
 
     const room = rooms[cleanRoomCode];
-    if (!room) {
-      socket.emit("joinError", "Комната не найдена");
-      return;
-    }
-
-    if ((room.password || "") !== cleanPassword) {
-      socket.emit("joinError", "Неверный пароль");
-      return;
-    }
+    if (!room) { socket.emit("joinError", "Комната не найдена"); return; }
+    if ((room.password || "") !== cleanPassword) { socket.emit("joinError", "Неверный пароль"); return; }
 
     const sameName = room.players.find(
-      (player) => player.name.toLowerCase() === cleanName.toLowerCase()
+      (p) => p.name.toLowerCase() === cleanName.toLowerCase()
     );
+    if (sameName) { socket.emit("joinError", "Ник уже занят в комнате"); return; }
 
-    if (sameName) {
-      socket.emit("joinError", "Ник уже занят в комнате");
-      return;
-    }
-
-    room.players.push({
-      id: socket.id,
-      name: cleanName,
-      score: 0
-    });
+    room.players.push({ id: socket.id, name: cleanName, score: 0 });
 
     socket.join(cleanRoomCode);
     socket.data.roomCode = cleanRoomCode;
 
-    socket.emit("joined", {
-      roomCode: cleanRoomCode,
-      isHost: false,
-      playerName: cleanName
-    });
+    socket.emit("joined", { roomCode: cleanRoomCode, isHost: false, playerName: cleanName });
 
     emitRoomPlayers(cleanRoomCode);
     emitRoomMessage(cleanRoomCode, `${cleanName} вошёл в игру`);
@@ -251,17 +260,14 @@ io.on("connection", (socket) => {
   socket.on("startRound", (category) => {
     const room = getRoomBySocket(socket);
     if (!room) return;
-
     if (socket.id !== room.hostId) {
       socket.emit("systemMessage", "Только ведущий может начать раунд");
       return;
     }
-
     if (!room.players.length) {
       socket.emit("systemMessage", "Нет игроков");
       return;
     }
-
     startRound(room.code, category || "");
   });
 
@@ -271,18 +277,30 @@ io.on("connection", (socket) => {
 
     const currentPlayer = room.players[room.currentTurnIndex];
     if (!currentPlayer) return;
-
     if (socket.id !== currentPlayer.id) {
       socket.emit("systemMessage", "Сейчас не твой ход");
       return;
     }
 
+    room.questionCount = (room.questionCount || 0) + 1;
+    io.to(room.code).emit("questionCountUpdate", { count: room.questionCount });
+
     if (result === "yes") {
+      clearTurnTimer(room);
       socket.emit("systemMessage", "Ответ: да");
+      startTurnTimer(room.code); // restart timer for next question
       return;
     }
 
     if (result === "no") {
+      clearTurnTimer(room);
+      nextTurn(room.code);
+    }
+
+    if (result === "dontknow") {
+      clearTurnTimer(room);
+      const name = currentPlayer.name;
+      emitRoomMessage(room.code, `${name} не знает — ход переходит`);
       nextTurn(room.code);
     }
   });
@@ -293,28 +311,32 @@ io.on("connection", (socket) => {
 
     const currentPlayer = room.players[room.currentTurnIndex];
     if (!currentPlayer) return;
-
     if (socket.id !== currentPlayer.id) {
       socket.emit("systemMessage", "Сейчас не твой ход");
       return;
     }
 
     if (isCorrectAnswer(answer, room.currentCharacter.name)) {
+      clearTurnTimer(room);
       currentPlayer.score += 1;
 
       io.to(room.code).emit("roundWinner", {
         winnerId: currentPlayer.id,
         winnerName: currentPlayer.name,
-        correctName: room.currentCharacter.name
+        correctName: room.currentCharacter.name,
+        // Reveal image to everyone on win
+        image: room.currentCharacter.image
       });
 
       emitRoomPlayers(room.code);
 
       setTimeout(() => {
         startRound(room.code, room.selectedCategory || "");
-      }, 2000);
+      }, 4000); // longer delay so players can see the image
     } else {
       socket.emit("answerWrong");
+      room.questionCount = (room.questionCount || 0) + 1;
+      io.to(room.code).emit("questionCountUpdate", { count: room.questionCount });
       nextTurn(room.code);
     }
   });
@@ -337,6 +359,7 @@ io.on("connection", (socket) => {
     }
 
     if (!room.players.length) {
+      clearTurnTimer(room);
       delete rooms[roomCode];
       return;
     }
