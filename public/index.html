@@ -132,4 +132,287 @@
       </div>
       <div id="joinBox" class="hidden">
         <div class="row">
-          <input id="joinNicknameInput" type="text" placeh
+          <input id="joinNicknameInput" type="text" placeholder="Ваш ник" />
+          <input id="joinRoomCodeInput" type="text" placeholder="Код комнаты" />
+          <input id="joinPasswordInput" type="text" placeholder="Пароль" />
+          <button id="joinRoomBtn">Войти</button>
+        </div>
+      </div>
+      <div id="joinError" class="error-msg hidden"></div>
+    </div>
+
+    <div id="gameUI" class="hidden">
+      <div class="card">
+        <div class="room-code-row">
+          <div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:2px;">КОД КОМНАТЫ</div>
+            <div id="roomCodeBox" class="room-code">—</div>
+          </div>
+          <button class="invite-btn" id="inviteBtn">🔗 Копировать ссылку</button>
+          <span class="invite-copied" id="inviteCopied">Скопировано!</span>
+        </div>
+      </div>
+
+      <div class="top-grid">
+        <div>
+          <div class="card">
+            <h2>Управление</h2>
+            <div class="q-counter">❓ Вопросов: <strong id="qCount">0</strong></div>
+            <div id="hostControls" class="hidden">
+              <div class="row">
+                <select id="categorySelect">
+                  <option value="">Все категории</option>
+                  <option value="football">⚽ Футбол</option>
+                  <option value="basketball">🏀 Баскетбол</option>
+                  <option value="music">🎵 Музыка</option>
+                  <option value="actors">🎬 Актёры</option>
+                  <option value="tech">💻 Технологии</option>
+                  <option value="gaming">🎮 Гейминг</option>
+                  <option value="sport">🥊 Спорт</option>
+                  <option value="cartoons">🐭 Мультики</option>
+                  <option value="cartoons_ru">🇷🇺 Мультики РУ</option>
+                  <option value="anime">🇯🇵 Аниме</option>
+                  <option value="superheroes">🦸 Супергерои</option>
+                  <option value="videogames">🕹️ Видеоигры</option>
+                </select>
+                <button id="startRoundBtn" class="green">▶ Старт</button>
+              </div>
+            </div>
+            <div class="timer-wrap" id="timerWrap" style="display:none;">
+              <div class="timer-bar-bg"><div class="timer-bar" id="timerBar"></div></div>
+              <div class="timer-text">⏱ <span id="timerText">30</span> сек</div>
+            </div>
+            <div class="action-row" style="margin-top:14px;">
+              <button id="yesBtn" class="green">✅ Да</button>
+              <button id="noBtn" class="red">❌ Нет</button>
+              <button id="dontKnowBtn" class="gray">🤷 Не знаю</button>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <input id="answerInput" type="text" placeholder="Кто это? Введи имя…" />
+              <button id="answerBtn">Ответ</button>
+            </div>
+            <div id="turnBox">Ход: —</div>
+            <div id="hostAnswerBox" class="hidden"></div>
+          </div>
+
+          <div class="card char-card">
+            <h2>Персонаж</h2>
+            <img id="personImage" alt="character" />
+            <div id="imageHiddenText">🙈 Картинка скрыта от игроков</div>
+            <div id="categoryBox" style="font-size:14px; color:var(--muted);">Категория: —</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2>Игроки</h2>
+            <ul id="playersList" class="players-list"></ul>
+          </div>
+          <div class="card">
+            <h2>События</h2>
+            <div id="messages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="winOverlay" class="hidden">
+    <div class="win-card">
+      <img id="winImage" src="" alt="" />
+      <div class="win-title">🏆 Победа!</div>
+      <div class="win-name" id="winPlayerName"></div>
+      <div class="win-answer" id="winAnswerText"></div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const lobbyCard = document.getElementById("lobbyCard");
+    const gameUI = document.getElementById("gameUI");
+    const showCreateBtn = document.getElementById("showCreateBtn");
+    const showJoinBtn = document.getElementById("showJoinBtn");
+    const createBox = document.getElementById("createBox");
+    const joinBox = document.getElementById("joinBox");
+    const createNicknameInput = document.getElementById("createNicknameInput");
+    const createPasswordInput = document.getElementById("createPasswordInput");
+    const createRoomBtn = document.getElementById("createRoomBtn");
+    const joinNicknameInput = document.getElementById("joinNicknameInput");
+    const joinRoomCodeInput = document.getElementById("joinRoomCodeInput");
+    const joinPasswordInput = document.getElementById("joinPasswordInput");
+    const joinRoomBtn = document.getElementById("joinRoomBtn");
+    const joinError = document.getElementById("joinError");
+    const roomCodeBox = document.getElementById("roomCodeBox");
+    const inviteBtn = document.getElementById("inviteBtn");
+    const inviteCopied = document.getElementById("inviteCopied");
+    const hostControls = document.getElementById("hostControls");
+    const categorySelect = document.getElementById("categorySelect");
+    const startRoundBtn = document.getElementById("startRoundBtn");
+    const timerWrap = document.getElementById("timerWrap");
+    const timerBar = document.getElementById("timerBar");
+    const timerText = document.getElementById("timerText");
+    const qCount = document.getElementById("qCount");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const dontKnowBtn = document.getElementById("dontKnowBtn");
+    const answerInput = document.getElementById("answerInput");
+    const answerBtn = document.getElementById("answerBtn");
+    const personImage = document.getElementById("personImage");
+    const imageHiddenText = document.getElementById("imageHiddenText");
+    const categoryBox = document.getElementById("categoryBox");
+    const turnBox = document.getElementById("turnBox");
+    const hostAnswerBox = document.getElementById("hostAnswerBox");
+    const playersList = document.getElementById("playersList");
+    const messages = document.getElementById("messages");
+    const winOverlay = document.getElementById("winOverlay");
+    const winImage = document.getElementById("winImage");
+    const winPlayerName = document.getElementById("winPlayerName");
+    const winAnswerText = document.getElementById("winAnswerText");
+
+    let isHost = false;
+    let roomCode = "";
+    let timerDuration = 30;
+
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let confettiParticles = [];
+    let confettiRunning = false;
+
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      confettiParticles = [];
+      for (let i = 0; i < 160; i++) {
+        confettiParticles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height, w: Math.random() * 12 + 6, h: Math.random() * 6 + 4, color: `hsl(${Math.random() * 360},80%,60%)`, rotation: Math.random() * 360, speed: Math.random() * 4 + 2, drift: Math.random() * 2 - 1, spin: Math.random() * 8 - 4, opacity: 1 });
+      }
+      confettiRunning = true;
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      if (!confettiRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      confettiParticles.forEach(p => {
+        p.y += p.speed; p.x += p.drift; p.rotation += p.spin;
+        if (p.y > canvas.height + 20) return;
+        alive = true;
+        ctx.save(); ctx.globalAlpha = Math.max(0, p.opacity); ctx.translate(p.x, p.y); ctx.rotate(p.rotation * Math.PI / 180); ctx.fillStyle = p.color; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      });
+      if (alive) requestAnimationFrame(animateConfetti);
+      else { confettiRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    }
+
+    function addMessage(text) {
+      const div = document.createElement("div");
+      div.className = "msg-item";
+      div.textContent = text;
+      messages.prepend(div);
+      while (messages.children.length > 10) messages.removeChild(messages.lastChild);
+    }
+
+    function showJoinError(text) { joinError.textContent = text; joinError.classList.remove("hidden"); }
+    function clearJoinError() { joinError.textContent = ""; joinError.classList.add("hidden"); }
+
+    function updateTimer(remaining) {
+      const pct = (remaining / timerDuration) * 100;
+      timerBar.style.width = pct + "%";
+      timerText.textContent = remaining;
+      timerBar.className = "timer-bar";
+      if (remaining <= 10) timerBar.classList.add("danger");
+      else if (remaining <= 20) timerBar.classList.add("warn");
+    }
+
+    showCreateBtn.addEventListener("click", () => { createBox.classList.remove("hidden"); joinBox.classList.add("hidden"); showCreateBtn.classList.add("active"); showJoinBtn.classList.remove("active"); clearJoinError(); });
+    showJoinBtn.addEventListener("click", () => { createBox.classList.add("hidden"); joinBox.classList.remove("hidden"); showJoinBtn.classList.add("active"); showCreateBtn.classList.remove("active"); clearJoinError(); });
+
+    inviteBtn.addEventListener("click", () => {
+      const url = `${location.origin}?room=${roomCode}`;
+      navigator.clipboard.writeText(url).then(() => { inviteCopied.classList.add("show"); setTimeout(() => inviteCopied.classList.remove("show"), 2000); });
+    });
+
+    const urlParams = new URLSearchParams(location.search);
+    const urlRoom = urlParams.get("room");
+    if (urlRoom) { joinRoomCodeInput.value = urlRoom.toUpperCase(); showJoinBtn.click(); }
+
+    createRoomBtn.addEventListener("click", () => { clearJoinError(); socket.emit("createRoom", { nickname: createNicknameInput.value.trim(), password: createPasswordInput.value.trim() }); });
+    joinRoomBtn.addEventListener("click", () => { clearJoinError(); socket.emit("joinRoom", { nickname: joinNicknameInput.value.trim(), roomCode: joinRoomCodeInput.value.trim(), password: joinPasswordInput.value.trim() }); });
+
+    [createNicknameInput, createPasswordInput].forEach(el => el.addEventListener("keydown", e => { if (e.key === "Enter") createRoomBtn.click(); }));
+    [joinNicknameInput, joinRoomCodeInput, joinPasswordInput].forEach(el => el.addEventListener("keydown", e => { if (e.key === "Enter") joinRoomBtn.click(); }));
+
+    startRoundBtn.addEventListener("click", () => { socket.emit("startRound", categorySelect.value); });
+    yesBtn.addEventListener("click", () => socket.emit("questionResult", "yes"));
+    noBtn.addEventListener("click", () => socket.emit("questionResult", "no"));
+    dontKnowBtn.addEventListener("click", () => socket.emit("questionResult", "dontknow"));
+
+    answerBtn.addEventListener("click", () => { const answer = answerInput.value.trim(); if (!answer) return; socket.emit("submitAnswer", answer); answerInput.value = ""; });
+    answerInput.addEventListener("keydown", e => { if (e.key === "Enter") answerBtn.click(); });
+
+    socket.on("joined", (data) => {
+      isHost = data.isHost; roomCode = data.roomCode || "";
+      lobbyCard.classList.add("hidden"); gameUI.classList.remove("hidden");
+      roomCodeBox.textContent = roomCode || "—";
+      if (isHost) { hostControls.classList.remove("hidden"); imageHiddenText.classList.add("hidden"); addMessage("👑 Ты ведущий"); }
+      else { hostControls.classList.add("hidden"); imageHiddenText.classList.remove("hidden"); addMessage("🎮 Ты игрок"); }
+    });
+
+    socket.on("becameHost", () => { isHost = true; hostControls.classList.remove("hidden"); imageHiddenText.classList.add("hidden"); addMessage("👑 Теперь ты ведущий"); });
+    socket.on("joinError", (text) => showJoinError(text));
+
+    socket.on("playersUpdated", (players) => {
+      playersList.innerHTML = "";
+      players.forEach((player) => {
+        const li = document.createElement("li");
+        if (player.isTurn) li.classList.add("turn");
+        if (player.isHost) li.classList.add("host");
+        li.textContent = `${player.name}  ${player.score} очк.` + (player.isHost ? " 👑" : "") + (player.isTurn ? " 🎯" : "");
+        playersList.appendChild(li);
+      });
+    });
+
+    socket.on("roundStarted", (data) => {
+      categoryBox.textContent = "Категория: " + (data.category || "—");
+      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
+      qCount.textContent = "0"; winOverlay.classList.add("hidden");
+      addMessage("🎬 Раунд начался");
+      timerWrap.style.display = "block";
+      if (!isHost) { personImage.src = ""; personImage.style.display = "none"; imageHiddenText.classList.remove("hidden"); hostAnswerBox.classList.add("hidden"); }
+    });
+
+    socket.on("hostRoundData", (data) => {
+      if (!isHost) return;
+      if (data.image) { personImage.src = data.image; personImage.style.display = "block"; } else { personImage.style.display = "none"; }
+      imageHiddenText.classList.add("hidden"); hostAnswerBox.classList.remove("hidden");
+      hostAnswerBox.textContent = `Ответ: ${data.name} (${data.category})`;
+    });
+
+    socket.on("playerRoundData", () => {
+      if (isHost) return;
+      personImage.src = ""; personImage.style.display = "none"; imageHiddenText.classList.remove("hidden"); hostAnswerBox.classList.add("hidden");
+    });
+
+    socket.on("turnChanged", (data) => { turnBox.textContent = "Ход: " + (data.turnPlayerName || "—"); addMessage("🎯 Ход: " + (data.turnPlayerName || "—")); });
+    socket.on("timerUpdate", (data) => { timerDuration = Math.max(timerDuration, data.remaining); updateTimer(data.remaining); });
+    socket.on("questionCountUpdate", (data) => { qCount.textContent = data.count; });
+
+    socket.on("roundWinner", (data) => {
+      winPlayerName.textContent = `${data.winnerName} угадал!`;
+      winAnswerText.textContent = `Это был: ${data.correctName}`;
+      if (data.image) { winImage.src = data.image; winImage.style.display = "block"; } else { winImage.style.display = "none"; }
+      winOverlay.classList.remove("hidden");
+      if (data.image) { personImage.src = data.image; personImage.style.display = "block"; personImage.classList.remove("reveal"); void personImage.offsetWidth; personImage.classList.add("reveal"); imageHiddenText.classList.add("hidden"); }
+      timerWrap.style.display = "none";
+      launchConfetti();
+      addMessage(`🏆 ${data.winnerName} угадал: ${data.correctName}`);
+      setTimeout(() => { winOverlay.classList.add("hidden"); }, 4000);
+    });
+
+    socket.on("answerWrong", () => { addMessage("❌ Неправильно"); });
+    socket.on("systemMessage", (text) => { addMessage(text); });
+  </script>
+</body>
+</html>
