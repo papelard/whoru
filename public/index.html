@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,25 +21,15 @@
       --radius: 18px;
       --radius-sm: 12px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      background-image:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.18) 0%, transparent 70%);
+      background-image: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.18) 0%, transparent 70%);
     }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px 16px 60px;
-    }
-
-    /* ── Header ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
     .logo {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 52px;
@@ -52,8 +41,6 @@
       line-height: 1;
       margin-bottom: 24px;
     }
-
-    /* ── Cards ── */
     .card {
       background: var(--card);
       border: 1px solid var(--card-border);
@@ -62,343 +49,80 @@
       margin-bottom: 16px;
       backdrop-filter: blur(10px);
     }
-
-    h2 {
-      font-size: 16px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
+    h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
     .hidden { display: none !important; }
-
-    /* ── Inputs / Buttons ── */
-    input, select, button {
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      padding: 12px 14px;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 600;
-    }
-
-    input, select {
-      width: 100%;
-      background: rgba(255,255,255,0.08);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.12);
-      outline: none;
-      transition: border-color .2s;
-    }
+    input, select, button { border: none; border-radius: var(--radius-sm); font-size: 15px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-weight: 600; }
+    input, select { width: 100%; background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.12); outline: none; transition: border-color .2s; }
     input:focus, select:focus { border-color: var(--accent); }
     input::placeholder { color: var(--muted); }
     select option { background: #0d1d35; }
-
-    button {
-      background: var(--accent);
-      color: white;
-      cursor: pointer;
-      font-weight: 700;
-      transition: transform .12s, opacity .12s;
-      user-select: none;
-    }
+    button { background: var(--accent); color: white; cursor: pointer; font-weight: 700; transition: transform .12s, opacity .12s; user-select: none; }
     button:active { transform: scale(0.96); }
     button:hover { opacity: 0.88; }
     button.green { background: var(--accent2); }
     button.red { background: var(--danger); }
-    button.amber { background: var(--accent3); color: #000; }
     button.gray { background: rgba(255,255,255,0.12); color: var(--text); }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
     .row > * { flex: 1; min-width: 140px; }
-
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
+    .tabs { display: flex; gap: 10px; margin-bottom: 16px; }
     .tab-btn { flex: 1; background: rgba(255,255,255,0.08); }
     .tab-btn.active { background: var(--accent); }
-
-    /* ── Room code ── */
-    .room-code-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .room-code {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 30px;
-      letter-spacing: 4px;
-      color: #60a5fa;
-    }
-    .invite-btn {
-      font-size: 13px;
-      padding: 8px 14px;
-      background: rgba(59,130,246,0.2);
-      color: #60a5fa;
-      border: 1px solid rgba(59,130,246,0.3);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background .2s;
-      flex: unset;
-    }
+    .room-code-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .room-code { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 4px; color: #60a5fa; }
+    .invite-btn { font-size: 13px; padding: 8px 14px; background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; cursor: pointer; transition: background .2s; flex: unset; }
     .invite-btn:hover { background: rgba(59,130,246,0.35); }
-    .invite-copied {
-      font-size: 13px;
-      color: var(--accent2);
-      opacity: 0;
-      transition: opacity .3s;
-    }
+    .invite-copied { font-size: 13px; color: var(--accent2); opacity: 0; transition: opacity .3s; }
     .invite-copied.show { opacity: 1; }
-
-    /* ── Top grid ── */
-    .top-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    @media (min-width: 800px) {
-      .top-grid { grid-template-columns: 1.3fr 0.7fr; }
-    }
-
-    /* ── Timer ── */
-    .timer-wrap {
-      margin: 12px 0 4px;
-    }
-    .timer-bar-bg {
-      background: rgba(255,255,255,0.1);
-      border-radius: 99px;
-      height: 8px;
-      overflow: hidden;
-    }
-    .timer-bar {
-      height: 100%;
-      border-radius: 99px;
-      background: var(--accent2);
-      transition: width 0.9s linear, background 0.5s;
-      width: 100%;
-    }
+    .top-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 800px) { .top-grid { grid-template-columns: 1.3fr 0.7fr; } }
+    .timer-wrap { margin: 12px 0 4px; }
+    .timer-bar-bg { background: rgba(255,255,255,0.1); border-radius: 99px; height: 8px; overflow: hidden; }
+    .timer-bar { height: 100%; border-radius: 99px; background: var(--accent2); transition: width 0.9s linear, background 0.5s; width: 100%; }
     .timer-bar.warn { background: var(--accent3); }
     .timer-bar.danger { background: var(--danger); }
-    .timer-text {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 5px;
-      text-align: right;
-    }
+    .timer-text { font-size: 13px; color: var(--muted); margin-top: 5px; text-align: right; }
     .timer-text span { color: var(--text); font-weight: 700; }
-
-    /* ── Question counter ── */
-    .q-counter {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 99px;
-      padding: 5px 12px;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
+    .q-counter { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.07); border-radius: 99px; padding: 5px 12px; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
     .q-counter strong { color: var(--text); }
-
-    /* ── Action buttons ── */
-    .action-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .action-row { display: flex; gap: 10px; margin-top: 12px; }
     .action-row button { flex: 1; }
     #dontKnowBtn { background: rgba(255,255,255,0.12); }
-
-    /* ── Turn indicator ── */
-    #turnBox {
-      font-weight: 700;
-      background: rgba(255,255,255,0.06);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      margin-top: 12px;
-      font-size: 15px;
-    }
-
-    #hostAnswerBox {
-      background: rgba(245,158,11,0.15);
-      border: 1px solid rgba(245,158,11,0.25);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      margin-top: 10px;
-      font-weight: 700;
-    }
-
-    /* ── Character card ── */
-    .char-card {
-      text-align: center;
-    }
-    #personImage {
-      width: 100%;
-      max-width: 320px;
-      display: none;
-      border-radius: 14px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      margin: 0 auto 12px;
-      transition: opacity .4s;
-    }
-    #personImage.reveal {
-      animation: revealPop .5s cubic-bezier(.2,1.6,.5,1) forwards;
-    }
-    @keyframes revealPop {
-      0% { transform: scale(0.85); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    #imageHiddenText {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    /* ── Players ── */
+    #turnBox { font-weight: 700; background: rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 12px; font-size: 15px; }
+    #hostAnswerBox { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 10px; font-weight: 700; }
+    .char-card { text-align: center; }
+    #personImage { width: 100%; max-width: 320px; display: none; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.5); margin: 0 auto 12px; transition: opacity .4s; }
+    #personImage.reveal { animation: revealPop .5s cubic-bezier(.2,1.6,.5,1) forwards; }
+    @keyframes revealPop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    #imageHiddenText { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
     .players-list { list-style: none; }
-    .players-list li {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      transition: border-color .3s;
-    }
-    .players-list li.turn {
-      border-color: var(--accent2);
-      background: rgba(34,197,94,0.08);
-    }
-    .players-list li.host {
-      border-color: var(--accent3);
-      background: rgba(245,158,11,0.08);
-    }
-
-    /* ── Messages ── */
-    .msg-item {
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      padding: 8px 12px;
-      margin-top: 8px;
-      font-size: 13px;
-      word-break: break-word;
-      animation: fadeSlide .25s ease;
-    }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Win overlay ── */
-    #winOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      flex-direction: column;
-      gap: 16px;
-      backdrop-filter: blur(8px);
-      animation: fadeIn .3s ease;
-    }
+    .players-list li { background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; font-size: 14px; font-weight: 600; transition: border-color .3s; }
+    .players-list li.turn { border-color: var(--accent2); background: rgba(34,197,94,0.08); }
+    .players-list li.host { border-color: var(--accent3); background: rgba(245,158,11,0.08); }
+    .msg-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 8px 12px; margin-top: 8px; font-size: 13px; word-break: break-word; animation: fadeSlide .25s ease; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    #winOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; gap: 16px; backdrop-filter: blur(8px); animation: fadeIn .3s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .win-card {
-      background: linear-gradient(135deg, #0d1d35, #162a4a);
-      border: 1px solid rgba(59,130,246,0.3);
-      border-radius: 24px;
-      padding: 32px 28px;
-      text-align: center;
-      max-width: 360px;
-      width: 90%;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
-      animation: popIn .4s cubic-bezier(.2,1.6,.5,1);
-    }
-    @keyframes popIn {
-      0% { transform: scale(0.7); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .win-card img {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .win-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 34px;
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .win-name {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 6px 0 4px;
-    }
-    .win-answer {
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    /* ── Error ── */
-    .error-msg {
-      background: rgba(239,68,68,0.15);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 14px;
-      margin-top: 10px;
-      color: #fca5a5;
-    }
-
-    /* ── Confetti canvas ── */
-    #confettiCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 999;
-    }
-
-    /* ── Mobile ── */
-    @media (max-width: 500px) {
-      .logo { font-size: 38px; }
-      .action-row { flex-direction: column; }
-      .row > * { min-width: 100%; }
-    }
+    .win-card { background: linear-gradient(135deg, #0d1d35, #162a4a); border: 1px solid rgba(59,130,246,0.3); border-radius: 24px; padding: 32px 28px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,0.6); animation: popIn .4s cubic-bezier(.2,1.6,.5,1); }
+    @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .win-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 16px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .win-title { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 2px; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .win-name { font-size: 22px; font-weight: 800; margin: 6px 0 4px; }
+    .win-answer { color: var(--muted); font-size: 15px; }
+    .error-msg { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; margin-top: 10px; color: #fca5a5; }
+    #confettiCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    @media (max-width: 500px) { .logo { font-size: 38px; } .action-row { flex-direction: column; } .row > * { min-width: 100%; } }
   </style>
 </head>
 <body>
   <canvas id="confettiCanvas"></canvas>
-
   <div class="container">
     <div class="logo">WhoRu</div>
 
-    <!-- Lobby -->
     <div id="lobbyCard" class="card">
       <div class="tabs">
         <button id="showCreateBtn" class="tab-btn active">Создать комнату</button>
         <button id="showJoinBtn" class="tab-btn">Войти в комнату</button>
       </div>
-
       <div id="createBox">
         <div class="row">
           <input id="createNicknameInput" type="text" placeholder="Ваш ник" />
@@ -406,478 +130,6 @@
           <button id="createRoomBtn">Создать</button>
         </div>
       </div>
-
       <div id="joinBox" class="hidden">
         <div class="row">
-          <input id="joinNicknameInput" type="text" placeholder="Ваш ник" />
-          <input id="joinRoomCodeInput" type="text" placeholder="Код комнаты" />
-          <input id="joinPasswordInput" type="text" placeholder="Пароль" />
-          <button id="joinRoomBtn">Войти</button>
-        </div>
-      </div>
-
-      <div id="joinError" class="error-msg hidden"></div>
-    </div>
-
-    <!-- Game UI -->
-    <div id="gameUI" class="hidden">
-      <div class="card">
-        <div class="room-code-row">
-          <div>
-            <div style="font-size:12px; color:var(--muted); margin-bottom:2px;">КОД КОМНАТЫ</div>
-            <div id="roomCodeBox" class="room-code">—</div>
-          </div>
-          <button class="invite-btn" id="inviteBtn">🔗 Копировать ссылку</button>
-          <span class="invite-copied" id="inviteCopied">Скопировано!</span>
-        </div>
-      </div>
-
-      <div class="top-grid">
-        <div>
-          <div class="card">
-            <h2>Управление</h2>
-
-            <!-- Question counter -->
-            <div class="q-counter" id="qCounter">
-              ❓ Вопросов: <strong id="qCount">0</strong>
-            </div>
-
-            <!-- Host controls -->
-            <div id="hostControls" class="hidden">
-              <div class="row">
-                <select id="categorySelect">
-                  <option value="">Все категории</option>
-                  <option value="football">⚽ Футбол</option>
-                  <option value="basketball">🏀 Баскетбол</option>
-                  <option value="music">🎵 Музыка</option>
-                  <option value="actors">🎬 Актёры</option>
-                  <option value="tech">💻 Технологии</option>
-                  <option value="gaming">🎮 Гейминг</option>
-                  <option value="sport">🥊 Спорт</option>
-                  <option value="cartoons">🐭 Мультики</option>
-                  <option value="cartoons_ru">🇷🇺 Мультики РУ</option>
-                  <option value="anime">🇯🇵 Аниме</option>
-                  <option value="superheroes">🦸 Супергерои</option>
-                  <option value="videogames">🕹️ Видеоигры</option>
-                </select>
-                <button id="startRoundBtn" class="green">▶ Старт</button>
-              </div>
-            </div>
-
-            <!-- Timer -->
-            <div class="timer-wrap" id="timerWrap" style="display:none;">
-              <div class="timer-bar-bg">
-                <div class="timer-bar" id="timerBar"></div>
-              </div>
-              <div class="timer-text">⏱ <span id="timerText">30</span> сек</div>
-            </div>
-
-            <!-- Answer buttons -->
-            <div class="action-row" style="margin-top:14px;">
-              <button id="yesBtn" class="green">✅ Да</button>
-              <button id="noBtn" class="red">❌ Нет</button>
-              <button id="dontKnowBtn" class="gray">🤷 Не знаю</button>
-            </div>
-
-            <!-- Guess input -->
-            <div class="row" style="margin-top:10px;">
-              <input id="answerInput" type="text" placeholder="Кто это? Введи имя…" />
-              <button id="answerBtn">Ответ</button>
-            </div>
-
-            <div id="turnBox">Ход: —</div>
-            <div id="hostAnswerBox" class="hidden"></div>
-          </div>
-
-          <div class="card char-card">
-            <h2>Персонаж</h2>
-            <img id="personImage" alt="character" />
-            <div id="imageHiddenText">🙈 Картинка скрыта от игроков</div>
-            <div id="categoryBox" style="font-size:14px; color:var(--muted);">Категория: —</div>
-          </div>
-        </div>
-
-        <div>
-          <div class="card">
-            <h2>Игроки</h2>
-            <ul id="playersList" class="players-list"></ul>
-          </div>
-
-          <div class="card">
-            <h2>События</h2>
-            <div id="messages"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Win overlay -->
-  <div id="winOverlay" class="hidden">
-    <div class="win-card">
-      <img id="winImage" src="" alt="" />
-      <div class="win-title">🏆 Победа!</div>
-      <div class="win-name" id="winPlayerName"></div>
-      <div class="win-answer" id="winAnswerText"></div>
-    </div>
-  </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-
-    // ── DOM refs ──────────────────────────────────────────────────────────────
-    const lobbyCard = document.getElementById("lobbyCard");
-    const gameUI = document.getElementById("gameUI");
-
-    const showCreateBtn = document.getElementById("showCreateBtn");
-    const showJoinBtn = document.getElementById("showJoinBtn");
-    const createBox = document.getElementById("createBox");
-    const joinBox = document.getElementById("joinBox");
-
-    const createNicknameInput = document.getElementById("createNicknameInput");
-    const createPasswordInput = document.getElementById("createPasswordInput");
-    const createRoomBtn = document.getElementById("createRoomBtn");
-
-    const joinNicknameInput = document.getElementById("joinNicknameInput");
-    const joinRoomCodeInput = document.getElementById("joinRoomCodeInput");
-    const joinPasswordInput = document.getElementById("joinPasswordInput");
-    const joinRoomBtn = document.getElementById("joinRoomBtn");
-    const joinError = document.getElementById("joinError");
-
-    const roomCodeBox = document.getElementById("roomCodeBox");
-    const inviteBtn = document.getElementById("inviteBtn");
-    const inviteCopied = document.getElementById("inviteCopied");
-
-    const hostControls = document.getElementById("hostControls");
-    const categorySelect = document.getElementById("categorySelect");
-    const startRoundBtn = document.getElementById("startRoundBtn");
-
-    const timerWrap = document.getElementById("timerWrap");
-    const timerBar = document.getElementById("timerBar");
-    const timerText = document.getElementById("timerText");
-
-    const qCount = document.getElementById("qCount");
-
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn = document.getElementById("noBtn");
-    const dontKnowBtn = document.getElementById("dontKnowBtn");
-    const answerInput = document.getElementById("answerInput");
-    const answerBtn = document.getElementById("answerBtn");
-
-    const personImage = document.getElementById("personImage");
-    const imageHiddenText = document.getElementById("imageHiddenText");
-    const categoryBox = document.getElementById("categoryBox");
-    const turnBox = document.getElementById("turnBox");
-    const hostAnswerBox = document.getElementById("hostAnswerBox");
-    const playersList = document.getElementById("playersList");
-    const messages = document.getElementById("messages");
-
-    const winOverlay = document.getElementById("winOverlay");
-    const winImage = document.getElementById("winImage");
-    const winPlayerName = document.getElementById("winPlayerName");
-    const winAnswerText = document.getElementById("winAnswerText");
-
-    let isHost = false;
-    let roomCode = "";
-    let timerDuration = 30;
-
-    // ── Confetti ──────────────────────────────────────────────────────────────
-    const canvas = document.getElementById("confettiCanvas");
-    const ctx = canvas.getContext("2d");
-    let confettiParticles = [];
-    let confettiRunning = false;
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
-    function launchConfetti() {
-      confettiParticles = [];
-      for (let i = 0; i < 160; i++) {
-        confettiParticles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          w: Math.random() * 12 + 6,
-          h: Math.random() * 6 + 4,
-          color: `hsl(${Math.random() * 360},80%,60%)`,
-          rotation: Math.random() * 360,
-          speed: Math.random() * 4 + 2,
-          drift: Math.random() * 2 - 1,
-          spin: Math.random() * 8 - 4,
-          opacity: 1
-        });
-      }
-      confettiRunning = true;
-      animateConfetti();
-    }
-
-    function animateConfetti() {
-      if (!confettiRunning) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let alive = false;
-      confettiParticles.forEach(p => {
-        p.y += p.speed;
-        p.x += p.drift;
-        p.rotation += p.spin;
-        if (p.y > canvas.height + 20) return;
-        alive = true;
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, p.opacity);
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation * Math.PI / 180);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      });
-      if (alive) requestAnimationFrame(animateConfetti);
-      else { confettiRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-    function addMessage(text) {
-      const div = document.createElement("div");
-      div.className = "msg-item";
-      div.textContent = text;
-      messages.prepend(div);
-      while (messages.children.length > 10) {
-        messages.removeChild(messages.lastChild);
-      }
-    }
-
-    function showJoinError(text) {
-      joinError.textContent = text;
-      joinError.classList.remove("hidden");
-    }
-
-    function clearJoinError() {
-      joinError.textContent = "";
-      joinError.classList.add("hidden");
-    }
-
-    function updateTimer(remaining) {
-      const pct = (remaining / timerDuration) * 100;
-      timerBar.style.width = pct + "%";
-      timerText.textContent = remaining;
-      timerBar.className = "timer-bar";
-      if (remaining <= 10) timerBar.classList.add("danger");
-      else if (remaining <= 20) timerBar.classList.add("warn");
-    }
-
-    // ── Tabs ──────────────────────────────────────────────────────────────────
-    showCreateBtn.addEventListener("click", () => {
-      createBox.classList.remove("hidden");
-      joinBox.classList.add("hidden");
-      showCreateBtn.classList.add("active");
-      showJoinBtn.classList.remove("active");
-      clearJoinError();
-    });
-
-    showJoinBtn.addEventListener("click", () => {
-      createBox.classList.add("hidden");
-      joinBox.classList.remove("hidden");
-      showJoinBtn.classList.add("active");
-      showCreateBtn.classList.remove("active");
-      clearJoinError();
-    });
-
-    // ── Invite link ───────────────────────────────────────────────────────────
-    inviteBtn.addEventListener("click", () => {
-      const url = `${location.origin}?room=${roomCode}`;
-      navigator.clipboard.writeText(url).then(() => {
-        inviteCopied.classList.add("show");
-        setTimeout(() => inviteCopied.classList.remove("show"), 2000);
-      });
-    });
-
-    // Auto-fill room code from URL param
-    const urlParams = new URLSearchParams(location.search);
-    const urlRoom = urlParams.get("room");
-    if (urlRoom) {
-      joinRoomCodeInput.value = urlRoom.toUpperCase();
-      showJoinBtn.click();
-    }
-
-    // ── Room actions ──────────────────────────────────────────────────────────
-    createRoomBtn.addEventListener("click", () => {
-      clearJoinError();
-      socket.emit("createRoom", {
-        nickname: createNicknameInput.value.trim(),
-        password: createPasswordInput.value.trim()
-      });
-    });
-
-    joinRoomBtn.addEventListener("click", () => {
-      clearJoinError();
-      socket.emit("joinRoom", {
-        nickname: joinNicknameInput.value.trim(),
-        roomCode: joinRoomCodeInput.value.trim(),
-        password: joinPasswordInput.value.trim()
-      });
-    });
-
-    // Enter key support
-    [createNicknameInput, createPasswordInput].forEach(el =>
-      el.addEventListener("keydown", e => { if (e.key === "Enter") createRoomBtn.click(); })
-    );
-    [joinNicknameInput, joinRoomCodeInput, joinPasswordInput].forEach(el =>
-      el.addEventListener("keydown", e => { if (e.key === "Enter") joinRoomBtn.click(); })
-    );
-
-    startRoundBtn.addEventListener("click", () => {
-      socket.emit("startRound", categorySelect.value);
-    });
-
-    yesBtn.addEventListener("click", () => socket.emit("questionResult", "yes"));
-    noBtn.addEventListener("click", () => socket.emit("questionResult", "no"));
-    dontKnowBtn.addEventListener("click", () => socket.emit("questionResult", "dontknow"));
-
-    answerBtn.addEventListener("click", () => {
-      const answer = answerInput.value.trim();
-      if (!answer) return;
-      socket.emit("submitAnswer", answer);
-      answerInput.value = "";
-    });
-    answerInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") answerBtn.click();
-    });
-
-    // ── Socket events ─────────────────────────────────────────────────────────
-    socket.on("joined", (data) => {
-      isHost = data.isHost;
-      roomCode = data.roomCode || "";
-
-      lobbyCard.classList.add("hidden");
-      gameUI.classList.remove("hidden");
-      roomCodeBox.textContent = roomCode || "—";
-
-      if (isHost) {
-        hostControls.classList.remove("hidden");
-        imageHiddenText.classList.add("hidden");
-        addMessage("👑 Ты ведущий");
-      } else {
-        hostControls.classList.add("hidden");
-        imageHiddenText.classList.remove("hidden");
-        addMessage("🎮 Ты игрок");
-      }
-    });
-
-    socket.on("becameHost", () => {
-      isHost = true;
-      hostControls.classList.remove("hidden");
-      imageHiddenText.classList.add("hidden");
-      addMessage("👑 Теперь ты ведущий");
-    });
-
-    socket.on("joinError", (text) => showJoinError(text));
-
-    socket.on("playersUpdated", (players) => {
-      playersList.innerHTML = "";
-      players.forEach((player) => {
-        const li = document.createElement("li");
-        if (player.isTurn) li.classList.add("turn");
-        if (player.isHost) li.classList.add("host");
-        li.textContent =
-          `${player.name}  ${player.score} очк.` +
-          (player.isHost ? " 👑" : "") +
-          (player.isTurn ? " 🎯" : "");
-        playersList.appendChild(li);
-      });
-    });
-
-    socket.on("roundStarted", (data) => {
-      categoryBox.textContent = "Категория: " + (data.category || "—");
-      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      qCount.textContent = "0";
-      winOverlay.classList.add("hidden");
-      addMessage("🎬 Раунд начался");
-
-      timerWrap.style.display = "block";
-
-      if (!isHost) {
-        personImage.src = "";
-        personImage.style.display = "none";
-        imageHiddenText.classList.remove("hidden");
-        hostAnswerBox.classList.add("hidden");
-      }
-    });
-
-    socket.on("hostRoundData", (data) => {
-      if (!isHost) return;
-      if (data.image) {
-        personImage.src = data.image;
-        personImage.style.display = "block";
-      } else {
-        personImage.style.display = "none";
-      }
-      imageHiddenText.classList.add("hidden");
-      hostAnswerBox.classList.remove("hidden");
-      hostAnswerBox.textContent = `Ответ: ${data.name} (${data.category})`;
-    });
-
-    socket.on("playerRoundData", () => {
-      if (isHost) return;
-      personImage.src = "";
-      personImage.style.display = "none";
-      imageHiddenText.classList.remove("hidden");
-      hostAnswerBox.classList.add("hidden");
-    });
-
-    socket.on("turnChanged", (data) => {
-      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
-      addMessage("🎯 Ход: " + (data.turnPlayerName || "—"));
-    });
-
-    socket.on("timerUpdate", (data) => {
-      timerDuration = Math.max(timerDuration, data.remaining); // guess duration on first tick
-      updateTimer(data.remaining);
-    });
-
-    socket.on("questionCountUpdate", (data) => {
-      qCount.textContent = data.count;
-    });
-
-    socket.on("roundWinner", (data) => {
-      // Show win overlay with image
-      winPlayerName.textContent = `${data.winnerName} угадал!`;
-      winAnswerText.textContent = `Это был: ${data.correctName}`;
-      if (data.image) {
-        winImage.src = data.image;
-        winImage.style.display = "block";
-      } else {
-        winImage.style.display = "none";
-      }
-      winOverlay.classList.remove("hidden");
-
-      // Also reveal image in the char card
-      if (data.image) {
-        personImage.src = data.image;
-        personImage.style.display = "block";
-        personImage.classList.remove("reveal");
-        void personImage.offsetWidth; // reflow
-        personImage.classList.add("reveal");
-        imageHiddenText.classList.add("hidden");
-      }
-
-      timerWrap.style.display = "none";
-      launchConfetti();
-      addMessage(`🏆 ${data.winnerName} угадал: ${data.correctName}`);
-
-      setTimeout(() => {
-        winOverlay.classList.add("hidden");
-      }, 4000);
-    });
-
-    socket.on("answerWrong", () => {
-      addMessage("❌ Неправильно");
-    });
-
-    socket.on("systemMessage", (text) => {
-      addMessage(text);
-    });
-  </script>
-</body>
-</html>
+          <input id="joinNicknameInput" type="text" placeh
