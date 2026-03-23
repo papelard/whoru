@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -21,7 +22,9 @@
       --radius: 18px;
       --radius-sm: 12px;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
@@ -29,7 +32,9 @@
       min-height: 100vh;
       background-image: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.18) 0%, transparent 70%);
     }
+
     .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+
     .logo {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 52px;
@@ -41,33 +46,86 @@
       line-height: 1;
       margin-bottom: 24px;
     }
-    .card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; backdrop-filter: blur(10px); }
-    h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
     .hidden { display: none !important; }
-    input, select, button { border: none; border-radius: var(--radius-sm); font-size: 15px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-weight: 600; }
-    input, select { width: 100%; background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.12); outline: none; transition: border-color .2s; }
+
+    input, select, button {
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      padding: 12px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+      outline: none;
+      transition: border-color .2s;
+    }
     input:focus, select:focus { border-color: var(--accent); }
     input::placeholder { color: var(--muted); }
     select option { background: #0d1d35; }
-    button { background: var(--accent); color: white; cursor: pointer; font-weight: 700; transition: transform .12s, opacity .12s; user-select: none; }
+
+    button {
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .12s, opacity .12s;
+      user-select: none;
+    }
     button:active { transform: scale(0.96); }
     button:hover { opacity: 0.88; }
     button.green { background: var(--accent2); }
     button.red { background: var(--danger); }
     button.gray { background: rgba(255,255,255,0.12); color: var(--text); }
+    button.amber { background: var(--accent3); color: #000; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
     .row { display: flex; gap: 10px; flex-wrap: wrap; }
     .row > * { flex: 1; min-width: 140px; }
+
     .tabs { display: flex; gap: 10px; margin-bottom: 16px; }
     .tab-btn { flex: 1; background: rgba(255,255,255,0.08); }
     .tab-btn.active { background: var(--accent); }
+
     .room-code-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .room-code { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 4px; color: #60a5fa; }
-    .invite-btn { font-size: 13px; padding: 8px 14px; background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; cursor: pointer; transition: background .2s; flex: unset; }
+    .invite-btn {
+      font-size: 13px; padding: 8px 14px;
+      background: rgba(59,130,246,0.2); color: #60a5fa;
+      border: 1px solid rgba(59,130,246,0.3); border-radius: 10px;
+      cursor: pointer; transition: background .2s; flex: unset;
+    }
     .invite-btn:hover { background: rgba(59,130,246,0.35); }
     .invite-copied { font-size: 13px; color: var(--accent2); opacity: 0; transition: opacity .3s; }
     .invite-copied.show { opacity: 1; }
+
     .top-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
     @media (min-width: 800px) { .top-grid { grid-template-columns: 1.3fr 0.7fr; } }
+
     .timer-wrap { margin: 12px 0 4px; }
     .timer-bar-bg { background: rgba(255,255,255,0.1); border-radius: 99px; height: 8px; overflow: hidden; }
     .timer-bar { height: 100%; border-radius: 99px; background: var(--accent2); transition: width 0.9s linear, background 0.5s; width: 100%; }
@@ -75,42 +133,163 @@
     .timer-bar.danger { background: var(--danger); }
     .timer-text { font-size: 13px; color: var(--muted); margin-top: 5px; text-align: right; }
     .timer-text span { color: var(--text); font-weight: 700; }
-    .q-counter { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.07); border-radius: 99px; padding: 5px 12px; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+    .q-counter {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.07); border-radius: 99px;
+      padding: 5px 12px; font-size: 13px; color: var(--muted); margin-bottom: 12px;
+    }
     .q-counter strong { color: var(--text); }
+
     .action-row { display: flex; gap: 10px; margin-top: 12px; }
     .action-row button { flex: 1; }
-    #dontKnowBtn { background: rgba(255,255,255,0.12); }
-    #turnBox { font-weight: 700; background: rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 12px; font-size: 15px; }
-    #hostAnswerBox { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 10px; font-weight: 700; }
+
+    #turnBox {
+      font-weight: 700; background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      margin-top: 12px; font-size: 15px;
+    }
+
+    #hostAnswerBox {
+      background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      margin-top: 10px; font-weight: 700;
+    }
+
+    /* ── Question input (players) ── */
+    #questionBlock {
+      margin-top: 12px;
+    }
+    #questionBlock .row { gap: 8px; }
+    #questionHint {
+      font-size: 12px; color: var(--muted);
+      margin-top: 6px; padding: 0 2px;
+    }
+    #questionHint.my-turn { color: var(--accent2); font-weight: 700; }
+
+    /* ── Custom photo upload (players) ── */
+    #customPhotoBlock {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+    #customPhotoBlock h3 {
+      font-size: 13px; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 10px;
+    }
+    #customPhotoPreview {
+      width: 80px; height: 80px; object-fit: cover;
+      border-radius: 10px; display: none; margin-bottom: 8px;
+      border: 2px solid var(--accent);
+    }
+    .upload-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm); padding: 9px 14px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: background .2s; width: 100%; justify-content: center;
+    }
+    .upload-label:hover { background: rgba(255,255,255,0.16); }
+    #customPhotoInput { display: none; }
+    #sendPhotoBtn { margin-top: 8px; width: 100%; background: var(--accent2); }
+
+    /* ── Char card ── */
     .char-card { text-align: center; }
-    #personImage { width: 100%; max-width: 320px; display: none; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.5); margin: 0 auto 12px; transition: opacity .4s; }
+    #personImage {
+      width: 100%; max-width: 320px; display: none;
+      border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      margin: 0 auto 12px; transition: opacity .4s;
+    }
     #personImage.reveal { animation: revealPop .5s cubic-bezier(.2,1.6,.5,1) forwards; }
-    @keyframes revealPop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes revealPop {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
     #imageHiddenText { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+
+    /* ── Players ── */
     .players-list { list-style: none; }
-    .players-list li { background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; font-size: 14px; font-weight: 600; transition: border-color .3s; }
+    .players-list li {
+      background: rgba(255,255,255,0.05); border: 1px solid transparent;
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      margin-bottom: 8px; font-size: 14px; font-weight: 600; transition: border-color .3s;
+    }
     .players-list li.turn { border-color: var(--accent2); background: rgba(34,197,94,0.08); }
     .players-list li.host { border-color: var(--accent3); background: rgba(245,158,11,0.08); }
-    .msg-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 8px 12px; margin-top: 8px; font-size: 13px; word-break: break-word; animation: fadeSlide .25s ease; }
-    @keyframes fadeSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    #winOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; gap: 16px; backdrop-filter: blur(8px); animation: fadeIn .3s ease; }
+
+    /* ── Messages ── */
+    .msg-item {
+      background: rgba(255,255,255,0.05); border-radius: 10px;
+      padding: 8px 12px; margin-top: 8px; font-size: 13px;
+      word-break: break-word; animation: fadeSlide .25s ease;
+    }
+    .msg-item.question-msg {
+      background: rgba(59,130,246,0.12);
+      border-left: 3px solid var(--accent);
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Win overlay ── */
+    #winOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; flex-direction: column; gap: 16px;
+      backdrop-filter: blur(8px); animation: fadeIn .3s ease;
+    }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .win-card { background: linear-gradient(135deg, #0d1d35, #162a4a); border: 1px solid rgba(59,130,246,0.3); border-radius: 24px; padding: 32px 28px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 24px 60px rgba(0,0,0,0.6); animation: popIn .4s cubic-bezier(.2,1.6,.5,1); }
-    @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    .win-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 16px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-    .win-title { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 2px; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .win-card {
+      background: linear-gradient(135deg, #0d1d35, #162a4a);
+      border: 1px solid rgba(59,130,246,0.3); border-radius: 24px;
+      padding: 32px 28px; text-align: center; max-width: 360px; width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6); animation: popIn .4s cubic-bezier(.2,1.6,.5,1);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .win-card img {
+      width: 150px; height: 150px; object-fit: cover;
+      border-radius: 16px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .win-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 2px;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
     .win-name { font-size: 22px; font-weight: 800; margin: 6px 0 4px; }
     .win-answer { color: var(--muted); font-size: 15px; }
-    .error-msg { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; margin-top: 10px; color: #fca5a5; }
-    #confettiCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
-    @media (max-width: 500px) { .logo { font-size: 38px; } .action-row { flex-direction: column; } .row > * { min-width: 100%; } }
+
+    .error-msg {
+      background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      font-size: 14px; margin-top: 10px; color: #fca5a5;
+    }
+
+    #confettiCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 999;
+    }
+
+    @media (max-width: 500px) {
+      .logo { font-size: 38px; }
+      .action-row { flex-direction: column; }
+      .row > * { min-width: 100%; }
+    }
   </style>
 </head>
 <body>
   <canvas id="confettiCanvas"></canvas>
+
   <div class="container">
     <div class="logo">WhoRu</div>
 
+    <!-- Lobby -->
     <div id="lobbyCard" class="card">
       <div class="tabs">
         <button id="showCreateBtn" class="tab-btn active">Создать комнату</button>
@@ -134,6 +313,7 @@
       <div id="joinError" class="error-msg hidden"></div>
     </div>
 
+    <!-- Game UI -->
     <div id="gameUI" class="hidden">
       <div class="card">
         <div class="room-code-row">
@@ -151,10 +331,12 @@
           <div class="card">
             <h2>Управление</h2>
             <div class="q-counter">❓ Вопросов: <strong id="qCount">0</strong></div>
+
+            <!-- HOST: category + start -->
             <div id="hostControls" class="hidden">
               <div class="row">
                 <select id="categorySelect">
-                  <option value="">Все категории</option>
+                  <option value="">🎲 Случайная категория</option>
                   <option value="football">⚽ Футбол</option>
                   <option value="basketball">🏀 Баскетбол</option>
                   <option value="music">🎵 Музыка</option>
@@ -170,20 +352,58 @@
                 </select>
                 <button id="startRoundBtn" class="green">▶ Старт</button>
               </div>
+              <!-- HOST: custom photo upload -->
+              <div id="hostPhotoBlock" style="margin-top:12px; background:rgba(255,255,255,0.04); border:1px dashed rgba(255,255,255,0.15); border-radius:var(--radius-sm); padding:12px;">
+                <div style="font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">📸 Своя картинка (опционально)</div>
+                <img id="hostPhotoPreview" style="width:80px;height:80px;object-fit:cover;border-radius:10px;display:none;margin-bottom:8px;border:2px solid var(--accent);" />
+                <label class="upload-label">
+                  📁 Выбрать фото
+                  <input type="file" id="hostPhotoInput" accept="image/*" style="display:none" />
+                </label>
+                <input id="hostCustomAnswerInput" type="text" placeholder="Имя персонажа..." style="margin-top:8px;" />
+                <button id="startCustomBtn" class="amber" style="margin-top:8px;width:100%;">🚀 Старт со своим фото</button>
+              </div>
             </div>
+
+            <!-- Timer -->
             <div class="timer-wrap" id="timerWrap" style="display:none;">
               <div class="timer-bar-bg"><div class="timer-bar" id="timerBar"></div></div>
               <div class="timer-text">⏱ <span id="timerText">60</span> сек</div>
             </div>
-            <div class="action-row" style="margin-top:14px;">
+
+            <!-- HOST: yes/no/dontknow buttons -->
+            <div id="hostActionRow" class="action-row" style="margin-top:14px;">
               <button id="yesBtn" class="green">✅ Да</button>
               <button id="noBtn" class="red">❌ Нет</button>
               <button id="dontKnowBtn" class="gray">🤷 Не знаю</button>
             </div>
+
+            <!-- PLAYER: question input -->
+            <div id="questionBlock" class="hidden">
+              <div class="row" style="margin-top:14px;">
+                <input id="questionInput" type="text" placeholder="Задай вопрос ведущему…" />
+                <button id="sendQuestionBtn" style="flex:0 0 auto; min-width:90px;">Спросить</button>
+              </div>
+              <div id="questionHint">Жди своего хода чтобы задать вопрос</div>
+            </div>
+
+            <!-- Everyone: guess input -->
             <div class="row" style="margin-top:10px;">
               <input id="answerInput" type="text" placeholder="Кто это? Введи имя…" />
               <button id="answerBtn">Ответ</button>
             </div>
+
+            <!-- PLAYER: custom photo suggest -->
+            <div id="customPhotoBlock" class="hidden">
+              <h3>📸 Предложить свою картинку</h3>
+              <img id="customPhotoPreview" alt="preview" />
+              <label class="upload-label">
+                📁 Выбрать фото
+                <input type="file" id="customPhotoInput" accept="image/*" />
+              </label>
+              <button id="sendPhotoBtn">📤 Отправить ведущему</button>
+            </div>
+
             <div id="turnBox">Ход: —</div>
             <div id="hostAnswerBox" class="hidden"></div>
           </div>
@@ -210,6 +430,7 @@
     </div>
   </div>
 
+  <!-- Win overlay -->
   <div id="winOverlay" class="hidden">
     <div class="win-card">
       <img id="winImage" src="" alt="" />
@@ -222,6 +443,8 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+
+    // ── DOM refs ──────────────────────────────────────────────────────────────
     const lobbyCard = document.getElementById("lobbyCard");
     const gameUI = document.getElementById("gameUI");
     const showCreateBtn = document.getElementById("showCreateBtn");
@@ -249,8 +472,21 @@
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const dontKnowBtn = document.getElementById("dontKnowBtn");
+    const hostActionRow = document.getElementById("hostActionRow");
+    const questionBlock = document.getElementById("questionBlock");
+    const questionInput = document.getElementById("questionInput");
+    const sendQuestionBtn = document.getElementById("sendQuestionBtn");
+    const questionHint = document.getElementById("questionHint");
     const answerInput = document.getElementById("answerInput");
     const answerBtn = document.getElementById("answerBtn");
+    const customPhotoBlock = document.getElementById("customPhotoBlock");
+    const customPhotoInput = document.getElementById("customPhotoInput");
+    const customPhotoPreview = document.getElementById("customPhotoPreview");
+    const sendPhotoBtn = document.getElementById("sendPhotoBtn");
+    const hostPhotoInput = document.getElementById("hostPhotoInput");
+    const hostPhotoPreview = document.getElementById("hostPhotoPreview");
+    const hostCustomAnswerInput = document.getElementById("hostCustomAnswerInput");
+    const startCustomBtn = document.getElementById("startCustomBtn");
     const personImage = document.getElementById("personImage");
     const imageHiddenText = document.getElementById("imageHiddenText");
     const categoryBox = document.getElementById("categoryBox");
@@ -266,12 +502,15 @@
     let isHost = false;
     let roomCode = "";
     let timerDuration = 60;
+    let myName = "";
+    let currentTurnName = "";
+    let hostCustomImageData = null;
 
+    // ── Confetti ──────────────────────────────────────────────────────────────
     const canvas = document.getElementById("confettiCanvas");
     const ctx = canvas.getContext("2d");
     let confettiParticles = [];
     let confettiRunning = false;
-
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
@@ -284,7 +523,6 @@
       confettiRunning = true;
       animateConfetti();
     }
-
     function animateConfetti() {
       if (!confettiRunning) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -299,12 +537,13 @@
       else { confettiRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
     }
 
-    function addMessage(text) {
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function addMessage(text, isQuestion = false) {
       const div = document.createElement("div");
-      div.className = "msg-item";
+      div.className = "msg-item" + (isQuestion ? " question-msg" : "");
       div.textContent = text;
       messages.prepend(div);
-      while (messages.children.length > 10) messages.removeChild(messages.lastChild);
+      while (messages.children.length > 20) messages.removeChild(messages.lastChild);
     }
 
     function showJoinError(text) { joinError.textContent = text; joinError.classList.remove("hidden"); }
@@ -315,52 +554,159 @@
       timerBar.style.width = pct + "%";
       timerText.textContent = remaining;
       timerBar.className = "timer-bar";
-      if (remaining <= 15) timerBar.classList.add("danger");
-      else if (remaining <= 30) timerBar.classList.add("warn");
+      if (remaining <= 10) timerBar.classList.add("danger");
+      else if (remaining <= 20) timerBar.classList.add("warn");
+    }
+
+    function updateTurnUI(turnName) {
+      currentTurnName = turnName || "";
+      turnBox.textContent = "Ход: " + (currentTurnName || "—");
+      if (!isHost) {
+        const isMyTurn = currentTurnName === myName;
+        sendQuestionBtn.disabled = !isMyTurn;
+        questionHint.textContent = isMyTurn
+          ? "✅ Твой ход — задавай вопрос!"
+          : `Ждёшь: сейчас ход ${currentTurnName || "—"}`;
+        questionHint.className = isMyTurn ? "my-turn" : "";
+      }
     }
 
     function setHostMode(host) {
       isHost = host;
+      hostControls.classList.toggle("hidden", !host);
+      hostActionRow.classList.toggle("hidden", !host);
+      questionBlock.classList.toggle("hidden", host);
+      customPhotoBlock.classList.toggle("hidden", host);
       if (host) {
-        hostControls.classList.remove("hidden");
         imageHiddenText.classList.add("hidden");
       } else {
-        hostControls.classList.add("hidden");
         imageHiddenText.classList.remove("hidden");
         personImage.style.display = "none";
         hostAnswerBox.classList.add("hidden");
       }
     }
 
-    showCreateBtn.addEventListener("click", () => { createBox.classList.remove("hidden"); joinBox.classList.add("hidden"); showCreateBtn.classList.add("active"); showJoinBtn.classList.remove("active"); clearJoinError(); });
-    showJoinBtn.addEventListener("click", () => { createBox.classList.add("hidden"); joinBox.classList.remove("hidden"); showJoinBtn.classList.add("active"); showCreateBtn.classList.remove("active"); clearJoinError(); });
+    // ── Tabs ──────────────────────────────────────────────────────────────────
+    showCreateBtn.addEventListener("click", () => {
+      createBox.classList.remove("hidden"); joinBox.classList.add("hidden");
+      showCreateBtn.classList.add("active"); showJoinBtn.classList.remove("active");
+      clearJoinError();
+    });
+    showJoinBtn.addEventListener("click", () => {
+      createBox.classList.add("hidden"); joinBox.classList.remove("hidden");
+      showJoinBtn.classList.add("active"); showCreateBtn.classList.remove("active");
+      clearJoinError();
+    });
 
     inviteBtn.addEventListener("click", () => {
       const url = `${location.origin}?room=${roomCode}`;
-      navigator.clipboard.writeText(url).then(() => { inviteCopied.classList.add("show"); setTimeout(() => inviteCopied.classList.remove("show"), 2000); });
+      navigator.clipboard.writeText(url).then(() => {
+        inviteCopied.classList.add("show");
+        setTimeout(() => inviteCopied.classList.remove("show"), 2000);
+      });
     });
 
     const urlParams = new URLSearchParams(location.search);
     const urlRoom = urlParams.get("room");
     if (urlRoom) { joinRoomCodeInput.value = urlRoom.toUpperCase(); showJoinBtn.click(); }
 
-    createRoomBtn.addEventListener("click", () => { clearJoinError(); socket.emit("createRoom", { nickname: createNicknameInput.value.trim(), password: createPasswordInput.value.trim() }); });
-    joinRoomBtn.addEventListener("click", () => { clearJoinError(); socket.emit("joinRoom", { nickname: joinNicknameInput.value.trim(), roomCode: joinRoomCodeInput.value.trim(), password: joinPasswordInput.value.trim() }); });
+    // ── Room actions ──────────────────────────────────────────────────────────
+    createRoomBtn.addEventListener("click", () => {
+      clearJoinError();
+      myName = createNicknameInput.value.trim();
+      socket.emit("createRoom", { nickname: myName, password: createPasswordInput.value.trim() });
+    });
+
+    joinRoomBtn.addEventListener("click", () => {
+      clearJoinError();
+      myName = joinNicknameInput.value.trim();
+      socket.emit("joinRoom", { nickname: myName, roomCode: joinRoomCodeInput.value.trim(), password: joinPasswordInput.value.trim() });
+    });
 
     [createNicknameInput, createPasswordInput].forEach(el => el.addEventListener("keydown", e => { if (e.key === "Enter") createRoomBtn.click(); }));
     [joinNicknameInput, joinRoomCodeInput, joinPasswordInput].forEach(el => el.addEventListener("keydown", e => { if (e.key === "Enter") joinRoomBtn.click(); }));
 
-    startRoundBtn.addEventListener("click", () => { socket.emit("startRound", categorySelect.value); });
+    // ── Host: start round ─────────────────────────────────────────────────────
+    startRoundBtn.addEventListener("click", () => {
+      socket.emit("startRound", categorySelect.value);
+      hostCustomImageData = null;
+      hostPhotoPreview.style.display = "none";
+      hostCustomAnswerInput.value = "";
+    });
+
+    // ── Host: custom photo ────────────────────────────────────────────────────
+    hostPhotoInput.addEventListener("change", () => {
+      const file = hostPhotoInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        hostCustomImageData = e.target.result;
+        hostPhotoPreview.src = hostCustomImageData;
+        hostPhotoPreview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    startCustomBtn.addEventListener("click", () => {
+      const answer = hostCustomAnswerInput.value.trim();
+      if (!answer) { alert("Введи имя персонажа!"); return; }
+      if (!hostCustomImageData) { alert("Выбери фото!"); return; }
+      socket.emit("startRoundCustom", { answer, image: hostCustomImageData });
+      hostCustomImageData = null;
+      hostPhotoPreview.style.display = "none";
+      hostCustomAnswerInput.value = "";
+    });
+
+    // ── Host: answer buttons ──────────────────────────────────────────────────
     yesBtn.addEventListener("click", () => socket.emit("questionResult", "yes"));
     noBtn.addEventListener("click", () => socket.emit("questionResult", "no"));
     dontKnowBtn.addEventListener("click", () => socket.emit("questionResult", "dontknow"));
 
-    answerBtn.addEventListener("click", () => { const answer = answerInput.value.trim(); if (!answer) return; socket.emit("submitAnswer", answer); answerInput.value = ""; });
+    // ── Player: send question ─────────────────────────────────────────────────
+    sendQuestionBtn.addEventListener("click", () => {
+      const text = questionInput.value.trim();
+      if (!text) return;
+      socket.emit("playerQuestion", text);
+      questionInput.value = "";
+    });
+    questionInput.addEventListener("keydown", e => { if (e.key === "Enter") sendQuestionBtn.click(); });
+
+    // ── Everyone: submit answer ───────────────────────────────────────────────
+    answerBtn.addEventListener("click", () => {
+      const answer = answerInput.value.trim();
+      if (!answer) return;
+      socket.emit("submitAnswer", answer);
+      answerInput.value = "";
+    });
     answerInput.addEventListener("keydown", e => { if (e.key === "Enter") answerBtn.click(); });
 
+    // ── Player: custom photo suggest ──────────────────────────────────────────
+    customPhotoInput.addEventListener("change", () => {
+      const file = customPhotoInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        customPhotoPreview.src = e.target.result;
+        customPhotoPreview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    sendPhotoBtn.addEventListener("click", () => {
+      if (!customPhotoPreview.src || customPhotoPreview.style.display === "none") {
+        alert("Сначала выбери фото!"); return;
+      }
+      socket.emit("suggestPhoto", customPhotoPreview.src);
+      addMessage("📸 Фото отправлено ведущему!");
+      customPhotoPreview.style.display = "none";
+      customPhotoInput.value = "";
+    });
+
+    // ── Socket events ─────────────────────────────────────────────────────────
     socket.on("joined", (data) => {
       isHost = data.isHost;
       roomCode = data.roomCode || "";
+      if (data.playerName) myName = data.playerName;
       lobbyCard.classList.add("hidden");
       gameUI.classList.remove("hidden");
       roomCodeBox.textContent = roomCode || "—";
@@ -393,17 +739,22 @@
 
     socket.on("roundStarted", (data) => {
       categoryBox.textContent = "Категория: " + (data.category || "—");
-      turnBox.textContent = "Ход: " + (data.turnPlayerName || "—");
+      updateTurnUI(data.turnPlayerName);
       qCount.textContent = "0";
       winOverlay.classList.add("hidden");
       addMessage("🎬 Раунд начался");
       timerWrap.style.display = "block";
-      if (!isHost) { personImage.src = ""; personImage.style.display = "none"; imageHiddenText.classList.remove("hidden"); hostAnswerBox.classList.add("hidden"); }
+      if (!isHost) {
+        personImage.src = ""; personImage.style.display = "none";
+        imageHiddenText.classList.remove("hidden");
+        hostAnswerBox.classList.add("hidden");
+      }
     });
 
     socket.on("hostRoundData", (data) => {
       if (!isHost) return;
-      if (data.image) { personImage.src = data.image; personImage.style.display = "block"; } else { personImage.style.display = "none"; }
+      if (data.image) { personImage.src = data.image; personImage.style.display = "block"; }
+      else { personImage.style.display = "none"; }
       imageHiddenText.classList.add("hidden");
       hostAnswerBox.classList.remove("hidden");
       hostAnswerBox.textContent = `Ответ: ${data.name} (${data.category})`;
@@ -411,19 +762,49 @@
 
     socket.on("playerRoundData", () => {
       if (isHost) return;
-      personImage.src = ""; personImage.style.display = "none"; imageHiddenText.classList.remove("hidden"); hostAnswerBox.classList.add("hidden");
+      personImage.src = ""; personImage.style.display = "none";
+      imageHiddenText.classList.remove("hidden");
+      hostAnswerBox.classList.add("hidden");
     });
 
-    socket.on("turnChanged", (data) => { turnBox.textContent = "Ход: " + (data.turnPlayerName || "—"); addMessage("🎯 Ход: " + (data.turnPlayerName || "—")); });
-    socket.on("timerUpdate", (data) => { timerDuration = Math.max(timerDuration, data.remaining); updateTimer(data.remaining); });
+    // Host receives suggested photo from player
+    socket.on("photoSuggested", (data) => {
+      if (!isHost) return;
+      // Show preview in host panel and auto-fill
+      hostPhotoPreview.src = data.image;
+      hostPhotoPreview.style.display = "block";
+      hostCustomImageData = data.image;
+      addMessage(`📸 ${data.fromName} прислал фото — проверь блок «Своя картинка»`);
+    });
+
+    socket.on("turnChanged", (data) => {
+      updateTurnUI(data.turnPlayerName);
+      addMessage("🎯 Ход: " + (data.turnPlayerName || "—"));
+    });
+
+    socket.on("timerUpdate", (data) => {
+      timerDuration = Math.max(timerDuration, data.remaining);
+      updateTimer(data.remaining);
+    });
+
     socket.on("questionCountUpdate", (data) => { qCount.textContent = data.count; });
+
+    // Player question broadcast — show for everyone with highlight
+    socket.on("playerQuestionBroadcast", (data) => {
+      addMessage(`❓ ${data.playerName}: ${data.question}`, true);
+    });
 
     socket.on("roundWinner", (data) => {
       winPlayerName.textContent = `${data.winnerName} угадал!`;
       winAnswerText.textContent = `Это был: ${data.correctName}`;
-      if (data.image) { winImage.src = data.image; winImage.style.display = "block"; } else { winImage.style.display = "none"; }
+      if (data.image) { winImage.src = data.image; winImage.style.display = "block"; }
+      else { winImage.style.display = "none"; }
       winOverlay.classList.remove("hidden");
-      if (data.image) { personImage.src = data.image; personImage.style.display = "block"; personImage.classList.remove("reveal"); void personImage.offsetWidth; personImage.classList.add("reveal"); imageHiddenText.classList.add("hidden"); }
+      if (data.image) {
+        personImage.src = data.image; personImage.style.display = "block";
+        personImage.classList.remove("reveal"); void personImage.offsetWidth; personImage.classList.add("reveal");
+        imageHiddenText.classList.add("hidden");
+      }
       timerWrap.style.display = "none";
       launchConfetti();
       addMessage(`🏆 ${data.winnerName} угадал: ${data.correctName}`);
