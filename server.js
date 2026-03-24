@@ -262,7 +262,8 @@ io.on("connection", (socket) => {
     if (!room) return;
     if (socket.id !== room.hostId) { socket.emit("systemMessage", "Только ведущий может начать раунд"); return; }
     const players = getPlayers(room);
-    if (!players.length) { socket.emit("systemMessage", "Нет игроков"); return; }
+    if (!players.length) { socket.emit("systemMessage", "Нет игроков — подожди пока кто-то войдёт"); return; }
+    if (room.gameStarted) { clearTurnTimer(room); room.gameStarted = false; }
     startRound(room.code, category || "");
   });
 
