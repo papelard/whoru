@@ -70,27 +70,25 @@ const packs = {
     { name: "PewDiePie", category: "gaming", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/PewDiePie_by_Gage_Skidmore.jpg/400px-PewDiePie_by_Gage_Skidmore.jpg" },
     { name: "MrBeast", category: "gaming", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/MrBeast_holding_a_Nickelodeon_Kids%27_Choice_Awards_blimp.jpg/400px-MrBeast_holding_a_Nickelodeon_Kids%27_Choice_Awards_blimp.jpg" },
 
-    // 🐭 CARTOONS — only free/commons images, no copyrighted character art
-    { name: "SpongeBob", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/SpongeBob_SquarePants_premiere_cropped.jpg/400px-SpongeBob_SquarePants_premiere_cropped.jpg" },
-    { name: "Shrek", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Shrek_2001_film.jpg/400px-Shrek_2001_film.jpg" },
-    { name: "Pikachu", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/400px-International_Pok%C3%A9mon_logo.svg.png" },
-    { name: "Bart Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Simpsons_-_Sent_to_Springfield.jpg/400px-The_Simpsons_-_Sent_to_Springfield.jpg" },
-    { name: "Homer Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Simpsons_-_Sent_to_Springfield.jpg/400px-The_Simpsons_-_Sent_to_Springfield.jpg" },
-    { name: "Tom Cat", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Tom_and_Jerry_logo.svg/400px-Tom_and_Jerry_logo.svg.png" },
-    { name: "Bugs Bunny", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Looney_Tunes_logo.svg/400px-Looney_Tunes_logo.svg.png" },
+    // 🐭 CARTOONS — фото актёров озвучки (реальные люди, нет проблем с авторскими правами)
+    { name: "SpongeBob", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Tom_Kenny_by_Gage_Skidmore.jpg/400px-Tom_Kenny_by_Gage_Skidmore.jpg" },
+    { name: "Shrek", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Mike_Myers_Shrek_2010.jpg/400px-Mike_Myers_Shrek_2010.jpg" },
+    { name: "Homer Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Dan_Castellaneta_2011.jpg/400px-Dan_Castellaneta_2011.jpg" },
+    { name: "Bart Simpson", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Nancy_Cartwright_2012.jpg/400px-Nancy_Cartwright_2012.jpg" },
     { name: "Winnie the Pooh", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Winniepoohandpiglet.jpg/400px-Winniepoohandpiglet.jpg" },
+    { name: "Pikachu", category: "cartoons", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/400px-Pok%C3%A9_Ball_icon.svg.png" },
 
     // 🇷🇺 CARTOONS RU
     { name: "Cheburashka", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cheburashka.jpg/400px-Cheburashka.jpg" },
     { name: "Masha", category: "cartoons_ru", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Masha_and_the_Bear_logo.svg/400px-Masha_and_the_Bear_logo.svg.png" },
 
-    // 🇯🇵 ANIME — use promotional/logo images from commons
+    // 🇯🇵 ANIME
     { name: "Naruto", category: "anime", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/NarutoPart1.jpg/400px-NarutoPart1.jpg" },
     { name: "Goku", category: "anime", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Dragon_Ball_Z_Son_Goku.jpg/400px-Dragon_Ball_Z_Son_Goku.jpg" },
     { name: "Doraemon", category: "anime", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Doraemon_character.png/400px-Doraemon_character.png" },
     { name: "Totoro", category: "anime", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/My_Neighbor_Totoro_-_Totoro.jpg/400px-My_Neighbor_Totoro_-_Totoro.jpg" },
 
-    // 🦸 SUPERHEROES — use real actor photos from MCU/DCEU premieres (commons)
+    // 🦸 SUPERHEROES — фото реальных актёров
     { name: "Spider-Man", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Tom_Holland_by_Gage_Skidmore.jpg/400px-Tom_Holland_by_Gage_Skidmore.jpg" },
     { name: "Batman", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Robert_Pattinson_2017.jpg/400px-Robert_Pattinson_2017.jpg" },
     { name: "Iron Man", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Robert_Downey_Jr_2014_Comic_Con_%28cropped%29.jpg/400px-Robert_Downey_Jr_2014_Comic_Con_%28cropped%29.jpg" },
@@ -99,11 +97,9 @@ const packs = {
     { name: "Captain America", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Chris_Evans_-_Captain_America_2.jpg/400px-Chris_Evans_-_Captain_America_2.jpg" },
     { name: "Wonder Woman", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Gal_Gadot_by_Gage_Skidmore_%28cropped%29.jpg/400px-Gal_Gadot_by_Gage_Skidmore_%28cropped%29.jpg" },
     { name: "Deadpool", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Ryan_Reynolds_2016.jpg/400px-Ryan_Reynolds_2016.jpg" },
-    { name: "Black Widow", category: "superheroes", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Scarlett_Johansson_2010.jpg/400px-Scarlett_Johansson_2010.jpg" },
 
-    // 🕹️ VIDEOGAMES — use developers/cosplay/game cover photos from commons
+    // 🕹️ VIDEOGAMES
     { name: "Mario", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Shigeru_Miyamoto_-_Game_Developers_Choice_Awards_2007_%28cropped%29.jpg/400px-Shigeru_Miyamoto_-_Game_Developers_Choice_Awards_2007_%28cropped%29.jpg" },
-    { name: "Sonic", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Yuji_Naka_in_2012.jpg/400px-Yuji_Naka_in_2012.jpg" },
     { name: "Geralt of Rivia", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Andrzej_Sapkowski_at_Paris_Game_Week_%28cropped%29.jpg/400px-Andrzej_Sapkowski_at_Paris_Game_Week_%28cropped%29.jpg" },
     { name: "Kratos", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Christopher_Judge_by_Gage_Skidmore_%28cropped%29.jpg/400px-Christopher_Judge_by_Gage_Skidmore_%28cropped%29.jpg" },
     { name: "Lara Croft", category: "videogames", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Alicia_Vikander_2018_%28cropped%29.jpg/400px-Alicia_Vikander_2018_%28cropped%29.jpg" },
